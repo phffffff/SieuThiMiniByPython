@@ -1,8 +1,13 @@
+import logging
+
 import PySimpleGUI as sg
 from Business.AccountBiz import AccountBiz
+from Entity.AccountEntity import Account
+
+
 class LoginGUI:
     def __init__(self):
-        sg.theme('DarkAmber')   # thiết lập theme
+        sg.theme('DarkAmber')  # thiết lập theme
 
         # định nghĩa layout cho giao diện
         layout = [[sg.Text('Đăng nhập', font=('Helvetica', 20), justification='center')],
@@ -25,12 +30,11 @@ class LoginGUI:
                 password = values['password']
                 biz = AccountBiz()
                 result = biz.login(username=username, password=password)
+                # print(result)
                 if result == None:
                     sg.popup('Đăng nhập thất baị')
                     return
-                sg.popup('Đăng nhập thành conông!')
-
-
+                sg.popup('Đăng nhập thành công!', result)
 
         # đóng cửa sổ giao diện khi kết thúc
         self.window.close()

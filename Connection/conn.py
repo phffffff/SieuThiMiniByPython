@@ -1,3 +1,5 @@
+import logging
+
 import mysql.connector
 import os
 
@@ -10,8 +12,14 @@ class Conn:
             database = os.environ.get("DATABASE"),
             port=os.environ.get("PORT")
         )
+        self.cursor = self.conn.cursor()
+
+
     def getCursor(self):
-        return self.conn.cursor()
+        if not self.conn.is_closed() and self.conn.is_connected():
+            return self.conn.cursor()
+        logging.error("Something wrong with db")
+        return None
     def execute_query(self, query, values=None):
         cursor = self.getCursor()
         if values:
@@ -21,5 +29,28 @@ class Conn:
         self.conn.commit()
         return cursor.fetchall()
     def close(self):
-        self.getCursor().close()
-        self.conn.close()
+        if self.cursor:
+            self.cursor.close()
+        if self.conn:
+            self.conn.close()
+
+    # transaction
+    def commit(self):
+        if self.conn:
+            self.conn.commit()
+
+    def rollback(self):
+        if self.conn:
+            self.conn.rollback()
+
+    def execute(self, sql, params=None):
+        self.cursor.execute(sql, params or ())
+        return self.cursor
+
+    def execute_one(self, sql, params=None):
+        self.cursor.execute(sql, params or ())
+        return self.cursor.fetchone()
+
+    def execute_all(self, sql, params=None):
+        self.cursor.execute(sql, params or ())
+        return self.cursor.fetchall()

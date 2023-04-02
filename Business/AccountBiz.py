@@ -1,5 +1,6 @@
 from DataAccess.AccountDal import AccountDAL
 
+
 class AccountBiz:
     def __init__(self):
         self.dal = AccountDAL()
@@ -7,7 +8,7 @@ class AccountBiz:
     def get_all_account(self):
         result = self.dal.get_all()
         # if result == None:
-            # return về ErrorResponse cho giao diện bắt
+        # return về ErrorResponse cho giao diện bắt
         return result
 
     def add_account(self, student):
@@ -19,6 +20,7 @@ class AccountBiz:
         # if result == -1:
         #     return về ErrorResponse cho giao diện bắt
         # return về SuccessResponse cho giao diện bắt
+
     def update_account(self, student):
         result = self.dal.update(student)
         # if result == -1:
@@ -30,8 +32,11 @@ class AccountBiz:
         # if result == -1:
         #     return về ErrorResponse cho giao diện bắt
         # return về SuccessResponse cho giao diện bắt
+
     def login(self, username, password):
-        result = self.dal.find(username, password)
+        # cond = "is_active = 1 and username = '{}' and password = {}".format(username, password)
+        # result = self.dal.find(cond=cond)
+        result = self.dal.findDataWithJson(conditions={"username": username, "password": password})
         if result:
             return result
         return None
