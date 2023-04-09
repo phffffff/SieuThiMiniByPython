@@ -1,7 +1,7 @@
 import mysql.connector.errors
 import logging
 
-
+from Entity.MembershipsEntity import Memberships
 class Crud_Dal:
     def __init__(self, tableName, conn):
         self.tableName = tableName
@@ -38,13 +38,48 @@ class Crud_Dal:
     # intanceDal.findDataWithCond(fields=['id', 'role_id'], where='is_active = 1')
     # cond = "is_active = 1 and username = '{}' and password = {}".format(username, password)
     # result = intanceDal.findDataWithCond(cond=cond)
-    def findDataWithCond(
+    def listDataWithCond(
             self,
             # table,
             fields='*',
             where=None,
             order_by=None,
-            limit=None
+            limit=None,
+
+    ):
+        try:
+            sql = f"SELECT {', '.join(fields) if isinstance(fields, list) else fields} FROM {self.tableName}"
+            if where:
+                sql += f" WHERE {where} and is_active=1"
+            if order_by:
+                sql += f" ORDER BY {order_by}"
+            if limit:
+                sql += f" LIMIT {limit}"
+
+
+            result = self.conn.execute_all(sql)
+            self.conn.commit()
+            member=[]
+            for row in result:
+               member.append(list(row))
+            return member
+            if member:
+                return member
+            return None
+        except mysql.connector.Error as e:
+            logging.error("Error: {}".format(e))
+            self.conn.rollback()
+            return None
+
+        # use: intanceDal.insert('tên bảng', {'username': 'haha', 'password': 1, 'role_id': 2, 'status': 1, 'is_active':1})
+    def listDataWithCond1(
+            self,
+            # table,
+            fields='*',
+            where=None,
+            order_by=None,
+            limit=None,
+            like=None
     ):
         try:
             sql = f"SELECT {', '.join(fields) if isinstance(fields, list) else fields} FROM {self.tableName}"
@@ -54,20 +89,22 @@ class Crud_Dal:
                 sql += f" ORDER BY {order_by}"
             if limit:
                 sql += f" LIMIT {limit}"
+            if like:
+                sql += f" LIKE '{like}%' and is_active=1"
 
-            result = self.conn.execute_one(sql)
+            result = self.conn.execute_all(sql)
             self.conn.commit()
-            self.conn.close()
-            if result:
-                return result
+            member=[]
+            for row in result:
+               member.append(list(row))
+            return member
+            if member:
+                return member
             return None
         except mysql.connector.Error as e:
             logging.error("Error: {}".format(e))
             self.conn.rollback()
             return None
-
-        # use: intanceDal.insert('tên bảng', {'username': 'haha', 'password': 1, 'role_id': 2, 'status': 1, 'is_active':1})
-
     def insert(
             self,
             # table_name,

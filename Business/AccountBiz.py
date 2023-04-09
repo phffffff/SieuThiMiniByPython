@@ -34,9 +34,9 @@ class AccountBiz:
         # return về SuccessResponse cho giao diện bắt
 
     def login(self, username, password):
-        # cond = "is_active = 1 and username = '{}' and password = {}".format(username, password)
-        # result = self.dal.find(cond=cond)
-        result = self.dal.findDataWithJson(conditions={"username": username, "password": password})
-        if result:
+         #cond = "is_active = 1 and username = '{}' and password = {}".format(username, password)
+         #result = self.dal.findDataWithCond(cond=cond)
+         result = self.dal.findDataWithJson(conditions={"username": username, "password": password})
+         if result:
             return result
-        return None
+         return None
