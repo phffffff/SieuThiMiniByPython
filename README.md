@@ -7,3 +7,5 @@ Hướng dẫn sử dụng trên .vscode
 - Kích hoạt: .\venv\Scripts\activate
 - Cài thư viện sử dụng: py -m pip install <tên-package (có thể tải nhiều package và phần cách bằng dấu space)> (2 thư viện sử dụng: mysql-connector-python, PySimpleGUI)
 - Chạy: py main.py
+
+Chạy trên pycharm thì dễ hơn rồi! Mở project và config môi trường, tải package và chạy (đều thủ công không sử dụng lệnh)
