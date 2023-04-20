@@ -3,7 +3,6 @@ from datetime import date
 
 from Connection.conn import Conn
 from Entity.AccountEntity import Account
-import mysql.connector.errors
 from Common.CRUD import Crud_Dal
 
 

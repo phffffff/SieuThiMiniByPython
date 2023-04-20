@@ -3,7 +3,7 @@ import logging
 import PySimpleGUI as sg
 from Business.AccountBiz import AccountBiz
 from Entity.AccountEntity import Account
-
+from Gui.MembershipsGui import MembershipsGui
 
 class LoginGUI:
     def __init__(self):
@@ -30,7 +30,7 @@ class LoginGUI:
                 password = values['password']
                 biz = AccountBiz()
                 result = biz.login(username=username, password=password)
-                # print(result)
+                print(result)
                 if result == None:
                     sg.popup('Đăng nhập thất baị')
                     return

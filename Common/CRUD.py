@@ -66,7 +66,102 @@ class Crud_Dal:
             self.conn.rollback()
             return None
 
-        # use: intanceDal.insert('tên bảng', {'username': 'haha', 'password': 1, 'role_id': 2, 'status': 1, 'is_active':1})
+        # use:
+        # intanceDal.findDataWithCond(fields=['id', 'role_id'], where='is_active = 1')
+        # cond = "is_active = 1 and username = '{}' and password = {}".format(username, password)
+        # result = intanceDal.findDataWithCond(cond=cond)
+
+    def listDataWithCond(
+            self,
+            # table,
+            fields='*',
+            where=None,
+            order_by=None,
+            limit=None,
+
+    ):
+        try:
+            sql = f"SELECT {', '.join(fields) if isinstance(fields, list) else fields} FROM {self.tableName}"
+            if where:
+                sql += f" WHERE {where} and is_active=1"
+            if order_by:
+                sql += f" ORDER BY {order_by}"
+            if limit:
+                sql += f" LIMIT {limit}"
+
+            result = self.conn.execute_all(sql)
+            self.conn.commit()
+            member = []
+            for row in result:
+                member.append(list(row))
+            return member
+            if member:
+                return member
+            return None
+        except mysql.connector.Error as e:
+            logging.error("Error: {}".format(e))
+            self.conn.rollback()
+            return None
+    def listDataWithCond1(
+            self,
+            # table,
+            fields='*',
+            where=None,
+            order_by=None,
+            limit=None,
+            like=None
+    ):
+        try:
+            sql = f"SELECT {', '.join(fields) if isinstance(fields, list) else fields} FROM {self.tableName}"
+            if where:
+                sql += f" WHERE {where}"
+            if order_by:
+                sql += f" ORDER BY {order_by}"
+            if limit:
+                sql += f" LIMIT {limit}"
+            if like:
+                sql += f" LIKE '{like}%' and is_active=1"
+
+            result = self.conn.execute_all(sql)
+            self.conn.commit()
+            member = []
+            for row in result:
+                member.append(list(row))
+            return member
+            if member:
+                return member
+            return None
+        except mysql.connector.Error as e:
+            logging.error("Error: {}".format(e))
+            self.conn.rollback()
+            return None
+
+    # use: intanceDal.insert('tên bảng', {'username': 'haha', 'password': 1, 'role_id': 2, 'status': 1, 'is_active':1})
+    def insert(
+            self,
+            # table_name,
+            data
+    ):
+        try:
+            placeholders = ', '.join(['%s'] * len(data))
+            columns = ', '.join(data.keys())
+            values = tuple(data.values())
+            sql = f"INSERT INTO {self.tableName} ({columns}) VALUES ({placeholders})"
+            result = self.conn.execute(sql, values)
+            self.conn.commit()
+            self.conn.close()
+            return result
+        except mysql.connector.Error as e:
+            logging.error("Error: {}".format(e))
+            self.conn.rollback()
+            return -1
+
+    """
+    use:
+        update_data = {"name": "John", "age": 30}
+        where_data = {"id": 1}
+        instanceDal.update("tên bảng", update_data, where_data)
+    """
 
     def insert(
             self,
