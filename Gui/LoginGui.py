@@ -4,6 +4,7 @@ import PySimpleGUI as sg
 from Business.AccountBiz import AccountBiz
 from Business.ProductBiz import ProductBiz
 from Entity.AccountEntity import Account
+from Gui.MembershipsGui import MembershipsGui
 from Entity.ProductEntity import Product
 
 
@@ -36,7 +37,7 @@ class LoginGUI:
                 product= Product("Coca")
                 result1 = biz1.update_product()
                 result = biz.login(username=username, password=password)
-                # print(result)
+                print(result)
                 if result == None:
                     sg.popup('Đăng nhập thất baị')
                     return
