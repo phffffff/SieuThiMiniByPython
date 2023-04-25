@@ -4,7 +4,7 @@ import PySimpleGUI as sg
 from Business.AccountBiz import AccountBiz
 from Business.ProductBiz import ProductBiz
 from Entity.AccountEntity import Account
-from Entity.ProductEntity import Product
+from Entity.ProductEntity import ProductEntity
 
 
 class LoginGUI:

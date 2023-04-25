@@ -1,16 +1,16 @@
-from Connection.conn import Conn
-from Common.CRUD import Crud_Dal
-import mysql.connector.errors
 import logging
+from datetime import date
+
+from Connection.conn import Conn
+from Entity.AccountEntity import Account
+import mysql.connector.errors
+from Common.CRUD import Crud_Dal
 
 
-class ProductDal(Crud_Dal):
+class SupplierDal(Crud_Dal):
     def __init__(self):
         self.conn = Conn()
-        Crud_Dal.__init__(self, tableName="products", conn=self.conn)
-
-
-    # def list(self,):
+        Crud_Dal.__init__(self, tableName="suppliers", conn=self.conn)
 
     def findDataWithCond(self, select="*", cond=None, key_order_by=None, limit=None):
         return super().findDataWithCond(fields=select, where=cond, order_by=key_order_by, limit=limit)
@@ -29,35 +29,35 @@ class ProductDal(Crud_Dal):
     def delete(self,data,cond):
         return super().update(update_data=data,where_data=cond)
 
-    # def get_all(self):
-    #     try:
-    #         query = "SELECT * FROM products"
-    #         result = self.conn.execute_all(query)
-    #         self.conn.commit()
-    #         products = []
-    #         for row in result:
-    #             sanpham = products(row[0], row[1], row[2], row[3], row[4], row[5],row[6])
-    #             products.append(sanpham)
-    #             self.conn.close()
-    #         return products
-    #     except mysql.connector.Error as e:
-    #         logging.error("Error: {}".format(e))
-    #         self.conn.rollback()
-    #         return -1
+    def get_all(self):
+        try:
+            query = "SELECT * FROM suppliers"
+            result = self.conn.execute_all(query)
+            self.conn.commit()
+            suppliers = []
+            for row in result:
+                nhacungcap = suppliers(row[0], row[1], row[2], row[3])
+                suppliers.append(nhacungcap)
+                self.conn.close()
+            return suppliers
+        except mysql.connector.Error as e:
+            logging.error("Error: {}".format(e))
+            self.conn.rollback()
+            return -1
 
-    # def add(self, product):
-    #     try:
-    #         sql = "INSERT INTO accounts (id, name, count, price, discount,product_type_id, is_active)" \
-    #               " VALUES (%d, %s, %s, %d, %d, %d, %d)"
-    #         val = (product.id, product.name, product.count, product.price, product.discount,product.product_type_id, product.ís_active)
-    #         result = self.conn.execute(sql,val)
-    #         self.conn.commit()
-    #         self.conn.close()
-    #         return result #số bản ghi bị ảnh hưởng (thường thì >= 0)
-    #     except mysql.connector.Error as e:
-    #         logging.error("Error: {}".format(e))
-    #         self.conn.rollback()
-    #         return -1
+    def add(self,supplier):
+        try:
+            sql = "INSERT INTO suppliers (id, name, addr,  is_active)" \
+                  " VALUES (%d, %s, %s, %d)"
+            val = (supplier.id, supplier.name, supplier.addr, supplier.is_active)
+            result = self.conn.execute(sql,val)
+            self.conn.commit()
+            self.conn.close()
+            return result #số bản ghi bị ảnh hưởng (thường thì >= 0)
+        except mysql.connector.Error as e:
+            logging.error("Error: {}".format(e))
+            self.conn.rollback()
+            return -1
 
     # def update(self, account):
     #     try:

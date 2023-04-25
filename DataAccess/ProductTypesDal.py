@@ -1,5 +1,7 @@
 from Connection.conn import Conn
 from Common.CRUD import Crud_Dal
+import logging
+import mysql.connector.errors
 class ProductTypesDal(Crud_Dal):
     def __init__(self):
         self.conn = Conn()
@@ -14,6 +16,9 @@ class ProductTypesDal(Crud_Dal):
     def findDataWithJson(self, conditions=None, key_order_by=None, limit=None):
         return super().findDataWithJson(conditions=conditions, order_by=key_order_by, limit=limit)
 
+    def listDataWithCond1(self, select="*", cond=None, key_order_by=None, limit=None, like=None):
+        return super().listDataWithCond1(fields=select, where=cond, order_by=key_order_by, limit=limit, like=like)
+
     def create(self, data):
         return super().insert(data)
 
@@ -22,36 +27,36 @@ class ProductTypesDal(Crud_Dal):
     def delete(self,data,cond):
         return super().update(update_data=data,where_data=cond)
 
-    # def get_all(self):
-    #     try:
-    #         query = "SELECT * FROM accounts"
-    #         result = self.conn.execute_all(query)
-    #         self.conn.commit()
-    #         accounts = []
-    #         for row in result:
-    #             taikhoan = Account(row[0], row[1], row[2], row[3], row[4], row[5])
-    #             accounts.append(taikhoan)
-    #             self.conn.close()
-    #         return accounts
-    #     except mysql.connector.Error as e:
-    #         logging.error("Error: {}".format(e))
-    #         self.conn.rollback()
-    #         return -1
-    #
-    # def add(self, account):
-    #     try:
-    #         sql = "INSERT INTO accounts (id, username, password, role_id, status, is_active)" \
-    #               " VALUES (%d, %s, %s, %d, %d, %d)"
-    #         val = (account.id, account.username, account.password, account.roleId, account.status, account.isActive)
-    #         result = self.conn.execute(sql,val)
-    #         self.conn.commit()
-    #         self.conn.close()
-    #         return result #số bản ghi bị ảnh hưởng (thường thì >= 0)
-    #     except mysql.connector.Error as e:
-    #         logging.error("Error: {}".format(e))
-    #         self.conn.rollback()
-    #         return -1
-    #
+    def get_all(self):
+        try:
+            query = "SELECT * FROM product_types"
+            result = self.conn.execute_all(query)
+            self.conn.commit()
+            product_types = []
+            for row in result:
+                loaisanpham = product_types(row[0], row[1], row[2])
+                product_types.append(loaisanpham)
+                self.conn.close()
+            return product_types
+        except mysql.connector.Error as e:
+            logging.error("Error: {}".format(e))
+            self.conn.rollback()
+            return -1
+
+    def add(self, producttypes):
+        try:
+            sql = "INSERT INTO product_types (id, name, is_active)" \
+                  " VALUES (%d, %s, %d)"
+            val = (producttypes.id, producttypes.name, producttypes.is_active)
+            result = self.conn.execute(sql,val)
+            self.conn.commit()
+            self.conn.close()
+            return result #số bản ghi bị ảnh hưởng (thường thì >= 0)
+        except mysql.connector.Error as e:
+            logging.error("Error: {}".format(e))
+            self.conn.rollback()
+            return -1
+
     # def update(self, account):
     #     try:
     #         sql = "UPDATE accounts SET username = %s, password = %s, role_id = %d, status = %d, is_active = %d" \
