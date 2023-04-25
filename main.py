@@ -1,12 +1,9 @@
-# from Gui.LoginGui import LoginGUI
-#
-# loginGui = LoginGUI()
-# loginGui.run()
 from Gui.MembershipsGui import MembershipsGui
-from Gui.PromotionGui import PromotionsGUI
 from Gui.CoupousGUI import CoupousGUI
+from Gui.StaffsGui import StaffsGui
 from Gui.LoginGui import LoginGUI
+Memberships = LoginGUI()
+Memberships.run()
 
-from Gui.ProductGui import ProductGUI
-productGui = ProductGUI()
-productGui.run()
+Staff = StaffsGui()
+Staff.run()
