@@ -1,4 +1,4 @@
-class Product:
+class ProductEntity:
     def __init__(self,id,name,count,price,discount,product_type_id,is_active):
         self.id=id
         self.name=name

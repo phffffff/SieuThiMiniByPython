@@ -5,40 +5,42 @@ class ProductTypesBiz:
     def __init__(self):
         self.dal = ProductTypesDal()
 
-    def get_all_prodcut(self):
-        result = self.dal.get_all()
+    def get_all_prodcut_types(self):
+        cond = 'is_active = 1'
+        result = self.dal.findDataWithCond(cond=cond)
+        if result:
+            return result
+        return None
+    def get_id(self,id):
+        cond = 'id ={}'.format(id)
+        result = self.dal.findDataWithCond(cond=cond)
+        if result:
+            return result
+        return None
 
-        # if result == None:
-        # return về ErrorResponse cho giao diện bắt
+    def get_name(self,name):
+        cond = 'name ={}'.format(name)
+        result = self.dal.listDataWithCond1(cond=cond)
+        if result:
+            return result
+        return None
+    def add_product_types(self, products_types):
+        result = self.dal.create(products_types)
+        if result == -1:
+            return -1
         return result
 
-    def add_product(self, products):
-        # kiểm tra tài khoản có tồn tại hay chưa
-        # viết thêm phương thức findWithCond trong dal
-        # if tồn tài:
-        #     return về ErrorResponse cho giao diện bắt
-        result = self.dal.add(products)
-        # if result == -1:
-        #     return về ErrorResponse cho giao diện bắt
-        # return về SuccessResponse cho giao diện bắt
-
-    def update_product(self, prodcuts,cond):
-        result = self.dal.update(prodcuts,cond)
-
+    def update_product_types(self, prodcuts_types,cond):
+        result = self.dal.update(prodcuts_types,cond)
         if result == -1:
             return -1
         return  result
-        # if result == -1:
-        #     return về ErrorResponse cho giao diện bắt
-        # return về SuccessResponse cho giao diện bắt
 
-    def delete_product(self, data,cond):
+
+    def delete_product_types(self, data,cond):
         result = self.dal.delete(data,cond)
-        # return result
-
         if result == -1:
             return -1
         return  result
-        # về SuccessResponse cho giao diện bắt
 
 
