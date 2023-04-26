@@ -1,7 +1,7 @@
 from Connection.conn import Conn
 from Common.CRUD import Crud_Dal
-import mysql.connector.errors
-import logging
+# import mysql.connector.errors
+# import logging
 
 
 class ProductDal(Crud_Dal):
@@ -9,24 +9,19 @@ class ProductDal(Crud_Dal):
         self.conn = Conn()
         Crud_Dal.__init__(self, tableName="products", conn=self.conn)
 
+    def find_data_with_cond(self, select="*", cond=None, key_order_by=None, limit=None):
+        return super().findDataWithJson(fields=select, where=cond, order_by=key_order_by, limit=limit)
 
-    # def list(self,):
+    def list_data_with_cond(self, select="*", cond=None, key_order_by=None, limit=None):
+        return super().listDataWithJson(fields=select, where=cond, order_by=key_order_by, limit=limit)
 
-    def findDataWithCond(self, select="*", cond=None, key_order_by=None, limit=None):
-        return super().findDataWithCond(fields=select, where=cond, order_by=key_order_by, limit=limit)
-
-    def listDataWithCond1(self, select="*", cond=None, key_order_by=None, limit=None, like=None):
-        return super().listDataWithCond1(fields=select, where=cond, order_by=key_order_by, limit=limit, like=like)
-
-    def findDataWithJson(self, conditions=None, key_order_by=None, limit=None):
-        return super().findDataWithJson(conditions=conditions, order_by=key_order_by, limit=limit)
-
-    def create(self, data):
+    def create_data(self, data):
         return super().insert(data)
 
-    def update(self, data, cond):
+    def update_data(self, data, cond):
         return super().update(update_data=data, where_data=cond)
-    def delete(self,data,cond):
+
+    def delete_data(self,data,cond):
         return super().update(update_data=data,where_data=cond)
 
     # def get_all(self):

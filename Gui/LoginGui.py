@@ -1,12 +1,8 @@
 import logging
 
 import PySimpleGUI as sg
-from Business.AccountBiz import AccountBiz
-from Business.ProductBiz import ProductBiz
-from Entity.AccountEntity import Account
-from Gui.MembershipsGui import MembershipsGui
-from Entity.ProductEntity import Product
 
+from Business.AccountBiz import AccountBiz
 
 class LoginGUI:
     def __init__(self):
@@ -32,10 +28,6 @@ class LoginGUI:
                 username = values['username']
                 password = values['password']
                 biz = AccountBiz()
-                biz1 = ProductBiz()
-                # name, count, price, discount, product_type_id, is_active
-                product= Product("Coca")
-                result1 = biz1.update_product()
                 result = biz.login(username=username, password=password)
                 print(result)
                 if result == None:

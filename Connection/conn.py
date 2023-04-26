@@ -12,10 +12,10 @@ class Conn:
             # database=os.environ.get("DATABASE"),
             # port=os.environ.get("PORT")
         host = "localhost",
-        user = "root",
-        password = "",
+        user = "sieu_thi_mini",
+        password = "@Klov3x124n",
         database = "sieu_thi_mini",
-        port = 3306
+        port = 3308
 
         )
         self.cursor = self.conn.cursor()
@@ -52,7 +52,7 @@ class Conn:
 
     def execute(self, sql, params=None):
         self.cursor.execute(sql, params or ())
-        return self.cursor
+        return self.cursor.rowcount
 
     def execute_one(self, sql, params=None):
         self.cursor.execute(sql, params or ())
