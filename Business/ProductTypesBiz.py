@@ -5,8 +5,8 @@ class ProductTypesBiz:
     def __init__(self):
         self.dal = ProductTypesDal()
 
-    def get_all_prodcut_types(self, cond=None):
-        result = self.dal.listDataWithJson(where=cond, order_by="id DESC")
+    def get_all_product_types(self, cond=None, fields="*"):
+        result = self.dal.listDataWithJson(where=cond, fields=fields, order_by="id DESC")
         if result:
             return result
         return []
@@ -29,8 +29,8 @@ class ProductTypesBiz:
             return -1
         return result
     
-    def find_product_types_with_cond(self, cond, data):
-        result = self.dal.findDataWithJson(where={"{}".format(cond):data})
+    def find_product_types_with_cond(self, key, value):
+        result = self.dal.findDataWithJson(where={"{}".format(key):value})
         if result:
             return result
         return []
@@ -46,4 +46,10 @@ class ProductTypesBiz:
 
     def to_str_id(seft, id):
         return "LM0{}".format(id) if id < 10 else "LM{}".format(id)
+
+    def get_A_from_B(self, A, nameB, valueB):
+        result = self.dal.findDataWithJson(fields=A, where={"{}".format(nameB):valueB}, limit=1)
+        
+        return result[0]
+            
 

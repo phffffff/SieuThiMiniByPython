@@ -5,82 +5,48 @@ class ProductBiz:
     def __init__(self):
         self.dal = ProductDal()
 
-    def get_all_product(self):
-        # đây là filter
-        cond = {"is_active": 1}
-        # 
-        result = self.dal.list_data_with_cond(cond=cond, key_order_by="id DESC")
+    def get_all_product(self, cond=None):
+        result = self.dal.listDataWithJson(where=cond, order_by="id DESC")
         if result :
            return result
         return []
         
-    # Thay vì sài như này
-    # def get_id(self,id):
-    #     cond = 'id = {}'.format(id)
-    #     result = self.dal.findDataWithCond(cond=cond)
-    #     if result:
-    #         return result
-    #     return None
-    # def get_name(self,name):
-    #     cond = 'name = {}'.format(name)
-    #     result = self.dal.listDataWithCond1(cond=cond)
-    #     if result:
-    #         return result
-    #     return None
-
-    # def get_count(self,count):
-    #     cond = 'count = {}'.format(count)
-    #     result = self.dal.listDataWithCond1(cond=cond)
-    #     if result:
-    #         return result
-    #     return None
-
-    # def get_price(self,price):
-    #     cond = 'price = {}'.format(price)
-    #     result = self.dal.listDataWithCond1(cond=cond)
-    #     if result:
-    #         return result
-    #     return None
-
-    # def get_discount(self,discount):
-    #     cond = 'discount = {}'.format(discount)
-    #     result = self.dal.findDataWithCond(cond=cond)
-    #     if result:
-    #         return result
-    #     return None
-
-    # def get_product_type_id(self,product_type_id):
-    #     cond = ' product_type_id = {}'.format(product_type_id)
-    #     result = self.dal.findDataWithCond(cond=cond)
-    #     if result:
-    #         return result
-    #     return None
-
-    # có thể viết gọn hơn
-    # tìm với gì thì làm ở UI
-    def find_product_with_cond(self, cond):
-        result = self.dal.find_data_with_cond(cond=cond)
+    def find_product_with_cond(self, key, value):
+        # mặc định nó sẽ tìm 1 row vì t để fetch_one, còn key
+        result = self.dal.findDataWithJson(where={"{}".format(key):value})
         if result:
             return result
         return None
 
     def add_product(self, products):
-        result = self.dal.create_data(products)
+        result = self.dal.insert(products)
         if result == -1:
             return -1
         return result
 
-    def update_product(self, prodcuts,cond):
-        result = self.dal.update_data(prodcuts,cond)
+    def update_product(self, product,cond):
+        result = self.dal.update(update_data=product, where_data=cond)
         if result == -1:
             return -1
         return  result
 
-    def delete_product(self, data, cond):
-        result = self.dal.delete_data(data,cond)
+    def delete_product(self, id):
+        result = self.dal.update(update_data={"is_active":0},where_data={"id":id})
         if result == -1:
             return -1
-        return  result
+        return result
+
+    def get_new_id(seft):
+        result = seft.dal.findDataWithJson(fields=['id'],order_by="id DESC", limit=1)
+
+        if result:
+            currentId = result[0]
+            temp = int(currentId +1)
+            return seft.to_str_id(temp)
+        return "SP01"
+
+    def to_str_id(seft, id):
+        return "SP0{}".format(id) if id < 10 else "SP{}".format(id)
 
 
 

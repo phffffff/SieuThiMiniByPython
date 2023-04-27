@@ -1,45 +1,97 @@
 import PySimpleGUI as sg
 from Business.ProductBiz import ProductBiz
+from Business.ProductTypesBiz import ProductTypesBiz
 from Entity.ProductEntity import ProductEntity
+from Common.PopupComfirm import getPopupComfirm
 
 class ProductGUI:
     def __init__(self):
-        biz = ProductBiz()
+    
+        self.Headings = ['ID', 'Name', 'Count', 'Price', 'Discount', 'Remaining', 'Type', 'Status']
 
-        self.Headings = ['ID', 'Tên Sản phẩm', 'số lượng', 'Giá', 'Giảm', 'Tên loại sản phẩm']
-        self.lstProduct = biz.get_all_product()
+        # get list product type 
+        self.lstProductType = ProductTypesBiz().get_all_product_types(cond={"is_active": 1},fields=["name"])
+        self.resultNamePrdctTp = []
+
+        for item in self.lstProductType:
+            item = list(item)
+            self.resultNamePrdctTp.append(item[0])
+        #Kết thúc 
+
+
+        # get list product
+        self.lstProduct = ProductBiz().get_all_product()
         self.result = []
-        print(self.lstProduct)
+
         for item in self.lstProduct:
-            self.result.append(list(item))
+            item = list(item)
+
+            item[0] = ProductBiz().to_str_id(id=item[0])# tùy chỉnh ID
+            item[5] = ProductTypesBiz().get_A_from_B(A="name", nameB="id", valueB=item[5])# tùy chỉnh ID Type
+            remain = item[3]-item[4] # tính remain
+            item.insert(5, remain) #đẩy ramain vào list, lưu ý thứu tự nha
+            
+            self.result.append(item)
+        # kết thúc
+
         
 
-        sg.theme('DarkAmber')  # thiết lập theme
-
+        sg.theme('DarkAmber')#thiết lập theme
         # định nghĩa layout cho giao diện
-        layou2 = [[sg.Text('DANH SÁCH SẢN PHẨM',font="blod",size=70,justification="center")],
+        layou2 = [[sg.Text('PRODUCT MANAGEMENT',font="blod",size=70,justification="center")],
                   [sg.Table(values=self.result, headings=self.Headings, justification="center", key='-TABLE-',enable_events=True)]]
-        layout1=  [[sg.Text('Chọn từ khóa search:',size=15),sg.Combo(['ID','NAME','COUNT','PRICE','DISCOUNT','PRODUCT_TYPE_ID'], key='-KEY-'),sg.Text('Content:'),sg.Input(key='-CONTENT-',size=22),sg.Button('SEARCH')],
-                      [sg.Text('Mã sản phẩm :',size=15), sg.Input(key=self.Headings[0])],
-                      [sg.Text('Tên sản phẩm:',size=15), sg.Input(key=self.Headings[1])],
-                      [sg.Text('Số lượng:',size=15), sg.Input(key=self.Headings[2])],
-                      [sg.Text('Giá tiền:',size=15), sg.Input(key=self.Headings[3])],
-                      [sg.Text('Tên loại sản phẩm:',size=15), sg.Input(key=self.Headings[5])],
-                      [sg.Button('Tạo mới'), sg.Button('Sửa'),sg.Button('Đổ dữ liệu'), sg.Button('Xóa'),sg.Button('Thêm')]]
+        layout1=  [[sg.Text('Search with:',size=15),sg.Combo(['id','name','count','price','discount','remaining','type','status'],default_value="id", key='-COMBO_SEARCH-',enable_events=True),sg.Text('Content:'),sg.Input(key='-CONTENT-',size=22,enable_events=True)],  
+                      [sg.Text('Id :',size=15), sg.Text(text="", key=self.Headings[0])],
+                      [sg.Text('Name:',size=15), sg.Input(key=self.Headings[1])],
+                      [sg.Text('Count:',size=15), sg.Text(text="", key=self.Headings[2])],
+                      [sg.Text('Price:',size=15), sg.Input(key=self.Headings[3])],
+                      [sg.Text('Type:',size=15), sg.Combo(values=self.resultNamePrdctTp, default_value=self.resultNamePrdctTp[0], key=self.Headings[6], enable_events=True)],
+                      [sg.Text('Status:',size=15), sg.Input(key=self.Headings[7],default_text="1")],
+                      [sg.Button('New ID'), sg.Button('Add'),sg.Button('Update'), sg.Button('Delete'),sg.Button('Reset')]]
 
         layout=[[sg.Col(layou2),sg.Col(layout1)]]
 
         # tạo cửa sổ giao diện
-        self.window = sg.Window('Sản phẩm trong siêu thị', layout)
+        self.window = sg.Window('Product', layout)
         self.window.read()
+        
 
     def empty(self):
-        self.window[self.Headings[0]].update('')
-        self.window[self.Headings[1]].update('')
-        self.window[self.Headings[2]].update('')
-        self.window[self.Headings[3]].update('')
-        self.window[self.Headings[4]].update('')
-        self.window[self.Headings[5]].update('')
+        for item in self.Headings:
+            if item == "Remaining" or item == "Discount":
+                continue
+            self.window[item].update('')
+
+    def reset(self):
+                # get list product type 
+        self.lstProductType = ProductTypesBiz().get_all_product_types(cond={"is_active": 1},fields=["name"])
+        self.resultNamePrdctTp = []
+
+        for item in self.lstProductType:
+            item = list(item)
+            self.resultNamePrdctTp.append(item[0])
+        #Kết thúc 
+
+
+        # get list product
+        self.lstProduct = ProductBiz().get_all_product()
+        self.result = []
+
+        for item in self.lstProduct:
+            item = list(item)
+
+            item[0] = ProductBiz().to_str_id(id=item[0])# tùy chỉnh ID
+            item[5] = ProductTypesBiz().get_A_from_B(A="name", nameB="id", valueB=item[5])# tùy chỉnh ID Type
+            remain = item[3]-item[4] # tính remain
+            item.insert(5, remain) #đẩy ramain vào list, lưu ý thứu tự nha
+            
+            self.result.append(item)
+        # kết thúc
+
+        self.window[self.Headings[6]].update(values=self.resultNamePrdctTp)
+        self.window["-TABLE-"].update(self.result)
+         
+       
 
     def run(self):
         while True:
@@ -47,96 +99,110 @@ class ProductGUI:
 
             if event == "Exit" or event == sg.WINDOW_CLOSED:
                 break
-            # elif event == 'Tạo Mới':
-            #     biz = ProductBiz()
-            #     id = values[self.Headings[0]]
-            #     name = values[self.Headings[1]]
-            #     count = values[self.Headings[2]]
-            #     price = values[self.Headings[3]]
-            #     discount = values[self.Headings[4]]
-            #     typeid = values[self.Headings[5]]
 
-            #     add == biz.add({'id':id,'name':name,'count':count,'price':price,'discount':discount,'product_type_id':typeid,'is_active':1})
+            elif event == 'New ID':
+                newId = ProductBiz().get_new_id()
 
-            #     if add:
-            #         sg.popup('THÊM THÀNH CÔNG')
-            #         self.result.append([values[self.Headings[0]], values[self.Headings[1]], values[self.Headings[2]], values[self.Headings[3]], values[self.Headings[4]], values[self.Headings[5]]])
-            #         self.window['-TABLE-'].update(values=self.result)
-            #         self.empty()
+                self.empty()
 
-            # elif event == "Đổ dữ liệu":
-            #     editRow = values['-TABLE-'][0]
-            #     sg.popup('Đổ dữ liệu thành công')
-            #     for i in range(6):
-            #         self.window[self.Headings[i]].update(value=self.result[editRow][i])
+                self.window[self.Headings[0]].update(newId)
+                self.window[self.Headings[2]].update(0)
+                self.window[self.Headings[6]].update(self.resultNamePrdctTp[0])
+                self.window[self.Headings[7]].update(1)
 
-            # elif event == "Xóa":
+            elif event == "Add":
+                id = self.window[self.Headings[0]].get()
+                name = values[self.Headings[1]]
+                price = values[self.Headings[3]]
+                # values[self.Headings[6]] là name đó
+                type_id = ProductTypesBiz().get_A_from_B(A="id",nameB="name",valueB=values[self.Headings[6]]) 
 
-            #     biz = ProductBiz()
-            #     id = values[self.Headings[0]]
+                # xử lý để lấy discount
+                # //
+                # kết thúc
 
-            #     result = biz.update({'is_active': 0}, {'id': id})
-            #     if result:
-            #         sg.popup("Xóa thành công")
-            #         del self.result[values['-TABLE-'][0]]
-            #         self.window['-TABLE-'].update(values=self.result)
-            #         self.empty()
-            #     else:
-            #         sg.popup("Xóa thất bại")
-            # elif event == 'SEARCH':
-            #     key = values['-KEY-']
-            #     biz = ProductBiz()
-            #     id = values['-CONTENT-']
-            #     if key == 'ID':
-            #         self.result = biz.get_id(id)
-            #         if self.result:
-            #             sg.popup("Tìm thành công")
-            #             self.window['-TABLE-'].update(values=self.result)
-            #         else:
-            #             sg.popup("Tìm thất bại")
+                product = {"id":id[2:], "name": name,"count": 0, "price":price, "discount":0, "product_type_id": type_id, "is_active":1}
 
-            #     elif key == 'NAME':
-            #         self.result = biz.get_name(id)
-            #         if self.result:
-            #             sg.popup("Tìm thành công")
-            #             self.window['-TABLE-'].update(values=self.result)
-            #         else:
-            #             sg.popup("Tìm thất bại")
-            #     elif key == 'COUNT':
-            #         self.result = biz.get_count(id)
-            #         if self.result:
-            #             sg.popup("Tìm thành công")
-            #             self.window['-TABLE-'].update(values=self.result)
-            #         else:
-            #             sg.popup("Tìm thất bại")
-            #     elif key == 'PRICE':
-            #         self.result = biz.get_price(id)
-            #         if self.result:
-            #             sg.popup("Tìm thành công")
-            #             self.window['-TABLE-'].update(values=self.result)
-            #         else:
-            #             sg.popup("Tìm thất bại")
-            #     elif key == 'DISCOUNT':
-            #         self.result = biz.get_discount(id)
-            #         if self.result:
-            #             sg.popup("Tìm thành công")
-            #             self.window['-TABLE-'].update(values=self.result)
-            #         else:
-            #             sg.popup("Tìm thất bại")
-            #     elif key == 'PRODUCT_TYPE_ID':
-            #         self.result = biz.get_product_type_id(id)
-            #         if self.result:
-            #             sg.popup("Tìm thành công")
-            #             self.window['-TABLE-'].update(values=self.result)
-            #         else:
-            #             sg.popup("Tìm thất bại")
-            #     else:
-            #         biz = ProductBiz()
-            #         self.dulieu = biz.get_all_prodcut()
-            #         self.result = [[]]
-            #         for self.row in self.dulieu:
-            #             self.result.append(list(self.row))
-            #         self.window['-TABLE-'].update(values=self.result)
+                add = ProductBiz().add_product(products=product)
+
+                if add != -1:
+                    sg.popup('Success')
+                    self.reset()
+
+            elif event == "Reset":
+                self.empty()
+                self.reset()
+
+            # onCLick element of table 
+            elif event == "-TABLE-":
+                selected_row = values["-TABLE-"]
+                # binding dữ liệu đến input field
+                if selected_row:
+                    for idx in range(len(self.Headings)):
+                        if self.Headings[idx] == "Discount" or self.Headings[idx] == "Remaining":
+                            continue
+                        self.window[self.Headings[idx]].update(self.result[selected_row[0]][idx])
+
+            elif event == "Delete":
+                id = self.window[self.Headings[0]].get()
+                if id == "":
+                    self.reset()
+                    sg.popup("Something error with server")
+
+                while True:
+                    # getPopupComfirm() có thể sài nhiều lần nên t để trong common
+                    event, values = getPopupComfirm().read()
+                    if event in (sg.WIN_CLOSED, 'Cancel'):
+                        break
+                    elif event == "OK":
+                        result = ProductBiz().delete_product(id=id[2:])
+                        if result:
+                            sg.popup("Xóa thành công")
+                            self.reset()
+                            break
+                        else:
+                            self.reset()
+                            sg.popup("Something error with db")
+
+            elif event == "Update":
+                id = self.window[self.Headings[0]].get()
+                name = values[self.Headings[1]]
+                price = values[self.Headings[3]]
+                type_id = ProductTypesBiz().get_A_from_B(A="id",nameB="name",valueB=values[self.Headings[6]]) 
+                is_active = values[self.Headings[7]]
+
+                data = {"id": id[2:], "name":name, "price": price,"product_type_id": type_id,"is_active":is_active}
+
+                flag = any(value == '' for value in data.values())
+                if flag:
+                    sg.popup("Invalid!")
+                    break
+                
+                upd = ProductBiz().update_product(product=data, cond={"id":id[2:]})
+                if upd != -1:
+                    sg.popup('Update Success')
+                    self.reset()
+                else:
+                    self.reset()
+                    sg.popup("Something error with db")
+            
+            # sự kiện search onchange
+            elif event == "-CONTENT-":
+                value_search = values["-CONTENT-"]
+                search_with = values["-COMBO_SEARCH-"]
+
+                # binding list to listProduct
+                productEntitys = []
+                for item in self.result:
+                    product = ProductEntity(*item)
+                    productEntitys.append(product)
+
+                result = []
+                for idx in range(len(productEntitys)):
+                    if value_search in str(getattr(productEntitys[idx],search_with)):
+                        result.append(self.result[idx])
+                    
+                self.window["-TABLE-"].update(result)
 
         self.window.close()
 

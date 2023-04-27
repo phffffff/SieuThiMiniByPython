@@ -7,7 +7,7 @@ class ProductTypeGUI:
     def __init__(self):
     
         self.Headings = ['ID', 'Name', 'Status']
-        self.lstProductTypes = ProductTypesBiz().get_all_prodcut_types()
+        self.lstProductTypes = ProductTypesBiz().get_all_product_types()
         self.result = []
 
         for item in self.lstProductTypes:
@@ -37,7 +37,7 @@ class ProductTypeGUI:
             self.window[item].update('')
 
     def reset(self):
-        self.lstProductTypes = ProductTypesBiz().get_all_prodcut_types()
+        self.lstProductTypes = ProductTypesBiz().get_all_product_types()
         self.result = []
 
         for item in self.lstProductTypes:
@@ -45,7 +45,7 @@ class ProductTypeGUI:
             item[0] = ProductTypesBiz().to_str_id(item[0])
             self.result.append(item)
             
-            self.window["-TABLE-"].update(self.result)
+        self.window["-TABLE-"].update(self.result)
 
     def run(self):
         while True:

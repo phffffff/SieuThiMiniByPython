@@ -10,7 +10,9 @@ from Gui.ProductTypesGui import ProductTypeGUI
 # Staff = StaffsGui()
 # Staff.run()
 
-# ProductTest = ProductGUI()
-# ProductGUI.run()
-ProductTest = ProductTypeGUI()
+ProductTest = ProductGUI()
 ProductTest.run()
+# ProductTest = ProductTypeGUI()
+# ProductTest.run()
+
+
