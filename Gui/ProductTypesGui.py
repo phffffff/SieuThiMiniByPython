@@ -5,6 +5,7 @@ from Common.PopupComfirm import getPopupComfirm
 
 class ProductTypeGUI:
     def __init__(self):
+        
     
         self.Headings = ['ID', 'Name', 'Status']
         self.lstProductTypes = ProductTypesBiz().get_all_product_types()
@@ -19,7 +20,7 @@ class ProductTypeGUI:
         # định nghĩa layout cho giao diện
         layou2 = [[sg.Text('PRODUCT TYPE MANAGEMENT',font="blod",size=70,justification="center")],
                   [sg.Table(values=self.result, headings=self.Headings, justification="center", key='-TABLE-',enable_events=True)]]
-        layout1=  [[sg.Text('Search with:',size=15),sg.Combo(['id','name','is_active'],default_value="id", key='-COMBO_SEARCH-',enable_events=True),sg.Text('Content:'),sg.Input(key='-CONTENT-',size=22,enable_events=True),sg.Button('SEARCH')],  
+        layout1=  [[sg.Text('Search with:',size=15),sg.Combo(['id','name','is_active'],default_value="id", key='-COMBO_SEARCH-',enable_events=True),sg.Text('Content:'),sg.Input(key='-CONTENT-',size=22,enable_events=True)],  
                       [sg.Text('Id :',size=15), sg.Text(text="", key=self.Headings[0])],
                       [sg.Text('Name:',size=15), sg.Input(key=self.Headings[1])],
                       [sg.Text('Status:',size=15), sg.Input(key=self.Headings[2],default_text="1")],

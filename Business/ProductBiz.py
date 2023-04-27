@@ -5,8 +5,8 @@ class ProductBiz:
     def __init__(self):
         self.dal = ProductDal()
 
-    def get_all_product(self, cond=None):
-        result = self.dal.listDataWithJson(where=cond, order_by="id DESC")
+    def get_all_product(self, cond=None, fields="*"):
+        result = self.dal.listDataWithJson(where=cond, fields=fields, order_by="id DESC")
         if result :
            return result
         return []
