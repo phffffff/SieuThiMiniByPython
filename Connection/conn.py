@@ -5,7 +5,7 @@ import os
 class Conn:
     def __init__(self):
         self.conn = mysql.connector.Connect(
-            host = os.environ.get("HOST"),
+            host=os.environ.get("HOST"),
             user = os.environ.get("USER"),
             password = os.environ.get("PASSWORD"),
             database = os.environ.get("DATABASE"),

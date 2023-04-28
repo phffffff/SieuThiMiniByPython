@@ -1,27 +1,25 @@
 import mysql.connector.errors
 import logging
 
-from Entity.MembershipsEntity import Memberships
 class Crud_Dal:
     def __init__(self, tableName, conn):
         self.tableName = tableName
         self.conn = conn
 
-    def findDataWithJson(self, conditions=None, order_by=None, limit=None):
+    def findDataWithJson(self, fields='*', where=None, order_by=None, limit=None):
         try:
-            query = f"SELECT * FROM {self.tableName}"
+            query = f"SELECT {', '.join(fields) if isinstance(fields, list) else fields} FROM {self.tableName}"
 
-            if conditions:
-                condition_string = " AND ".join([f"{key}=%s" for key in conditions.keys()])
+            if where:
+                condition_string = " AND ".join([f"{key}=%s" for key in where.keys()])
                 query += f" WHERE {condition_string}"
-
             if order_by:
                 query += f" ORDER BY {order_by}"
 
             if limit:
                 query += f" LIMIT {limit}"
 
-            params = tuple(conditions.values()) if conditions else None
+            params = tuple(where.values()) if where else None
 
             result = self.conn.execute_one(query, params)
             self.conn.commit()
@@ -38,48 +36,13 @@ class Crud_Dal:
     # intanceDal.findDataWithCond(fields=['id', 'role_id'], where='is_active = 1')
     # cond = "is_active = 1 and username = '{}' and password = {}".format(username, password)
     # result = intanceDal.findDataWithCond(cond=cond)
-    def listDataWithCond(
+    def findDataWithCond(
             self,
             # table,
             fields='*',
             where=None,
             order_by=None,
-            limit=None,
-
-    ):
-        try:
-            sql = f"SELECT {', '.join(fields) if isinstance(fields, list) else fields} FROM {self.tableName}"
-            if where:
-                sql += f" WHERE {where} and is_active=1"
-            if order_by:
-                sql += f" ORDER BY {order_by}"
-            if limit:
-                sql += f" LIMIT {limit}"
-
-
-            result = self.conn.execute_all(sql)
-            self.conn.commit()
-            member=[]
-            for row in result:
-               member.append(list(row))
-            return member
-            if member:
-                return member
-            return None
-        except mysql.connector.Error as e:
-            logging.error("Error: {}".format(e))
-            self.conn.rollback()
-            return None
-
-        # use: intanceDal.insert('tên bảng', {'username': 'haha', 'password': 1, 'role_id': 2, 'status': 1, 'is_active':1})
-    def listDataWithCond1(
-            self,
-            # table,
-            fields='*',
-            where=None,
-            order_by=None,
-            limit=None,
-            like=None
+            limit=None
     ):
         try:
             sql = f"SELECT {', '.join(fields) if isinstance(fields, list) else fields} FROM {self.tableName}"
@@ -89,25 +52,79 @@ class Crud_Dal:
                 sql += f" ORDER BY {order_by}"
             if limit:
                 sql += f" LIMIT {limit}"
-            if like:
-                sql += f" LIKE '{like}%' and is_active=1"
 
-            result = self.conn.execute_all(sql)
+            result = self.conn.execute_one(sql)
             self.conn.commit()
-            member=[]
-            for row in result:
-               member.append(list(row))
-            return member
-            if member:
-                return member
+            self.conn.close()
+            if result:
+                return result
             return None
         except mysql.connector.Error as e:
             logging.error("Error: {}".format(e))
             self.conn.rollback()
             return None
+
+    # list với điều kiện
+    def listDataWithCond(
+            self,
+            fields='*',
+            where=None,
+            order_by=None,
+            limit=None
+    ):
+        try:
+            sql = f"SELECT {', '.join(fields) if isinstance(fields, list) else fields} FROM {self.tableName}"
+            if where:
+                sql += f" WHERE {where}"
+            if order_by:
+                sql += f" ORDER BY {order_by}"
+            if limit:
+                sql += f" LIMIT {limit}"
+
+            results = self.conn.execute_all(sql)
+            self.conn.commit()
+            self.conn.close()
+            if results:
+                return results
+            return None
+        except mysql.connector.Error as e:
+            logging.error("Error: {}".format(e))
+            self.conn.rollback()
+            return None
+
+    # vẫn là list với điều kiện (nhma điều kiện này dưới dạng json "key" - value)
+    # thêm sự lựa chọn cho ai thích cond dạng key:value
+    def listDataWithJson(
+            self,
+            fields='*',
+            where=None,
+            order_by=None,
+            limit=None
+    ):
+        try:
+            sql = f"SELECT {', '.join(fields) if isinstance(fields, list) else fields} FROM {self.tableName}"
+            if where:
+                condition_string = " AND ".join([f"{key}=%s" for key in where.keys()])
+                sql += f" WHERE {condition_string}"
+            if order_by:
+                sql += f" ORDER BY {order_by}"
+            if limit:
+                sql += f" LIMIT {limit}"
+            params = tuple(where.values()) if where else None
+
+            results = self.conn.execute_all(sql, params)
+            self.conn.commit()
+            self.conn.close()
+            if results:
+                return results
+            return None
+        except mysql.connector.Error as e:
+            logging.error("Error: {}".format(e))
+            self.conn.rollback()
+            return None
+
     def insert(
             self,
-            # table_name,
             data
     ):
         try:
@@ -125,7 +142,7 @@ class Crud_Dal:
             return -1
 
     """
-    use:
+    use:    
         update_data = {"name": "John", "age": 30}
         where_data = {"id": 1}
         instanceDal.update("tên bảng", update_data, where_data)
@@ -133,7 +150,6 @@ class Crud_Dal:
 
     def update(
             self,
-            # table,
             update_data,
             where_data
     ):
