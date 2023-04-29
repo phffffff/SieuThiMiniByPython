@@ -1,71 +1,51 @@
-from builtins import bool
 
-from DataAccess.MembershipsDal import MembershipsDal
+
+from SieuThiMiniByPython.DataAccess.MembershipsDal import MembershipsDal
 
 class MembershipsBiz:
     def __init__(self):
         self.dal = MembershipsDal()
 
-    def get_all(self):
-        cond = 'is_active=1'
-        result = self.dal.listDataWithCond(cond=cond)
+    def get_all_memberships(self, cond=None):
+        result = self.dal.listDataWithJson(where=cond, order_by="id ASC")
         if result:
             return result
-        return None
-    def get_id(self,id):
-        cond = 'id = {}'.format(id)
-        result = self.dal.listDataWithCond(cond=cond)
-        if result:
-            return result
-        return None
-    def get_name(self,name):
-        cond = 'name'
-        like = '{}'.format(name)
-        result = self.dal.listDataWithCond1(cond=cond,like=like)
-        if result:
-            return result
-        return None
-    def get_bir(self,birthday):
-        cond = 'birthday'
-        like = '{}'.format(birthday)
-        result = self.dal.listDataWithCond1(cond=cond, like=like)
-        if result:
-            return result
-        return None
-    def get_phone(self,phone):
-        cond = 'phone'
-        like = '{}'.format(phone)
-        result = self.dal.listDataWithCond1(cond=cond, like=like)
-        if result:
-            return result
-        return None
-    def get_point(self,point):
-        cond = 'point = {}'.format(point)
-        result = self.dal.listDataWithCond(cond=cond)
-        if result:
-            return result
-        return None
-    def get_mail(self,mail):
-        cond = 'mail AND is_active'
-        like = '{}'.format(mail)
-        result = self.dal.listDataWithCond(cond=cond, like=like)
+        return []
+
+    def find_memberships_with_cond(self, key, value):
+        # mặc định nó sẽ tìm 1 row vì t để fetch_one, còn key
+        result = self.dal.findDataWithJson(where={"{}".format(key): value})
         if result:
             return result
         return None
 
-
-    def add(self, member):
-        result = self.dal.create(member)
+    def add_memberships(self, memberships):
+        result = self.dal.insert(memberships)
         if result == -1:
             return -1
         return result
 
-    def update(self, member,cond):
-        result = self.dal.update(member,cond)
+    def update_memberships(self, memberships, cond):
+        result = self.dal.update(update_data=memberships, where_data=cond)
         if result == -1:
             return -1
         return result
-        # if result == -1:
-        #     return về ErrorResponse cho giao diện bắt
-        # return về SuccessResponse cho giao diện bắt
+
+    def delete_memberships(self, id):
+        result = self.dal.update(update_data={"is_active": 0}, where_data={"id": id})
+        if result == -1:
+            return -1
+        return result
+
+    def get_new_id(seft):
+        result = seft.dal.findDataWithJson(fields=['id'], order_by="id DESC", limit=1)
+
+        if result:
+            currentId = result[0]
+            temp = int(currentId + 1)
+            return seft.to_str_id(temp)
+        return "MB01"
+
+    def to_str_id(seft, id):
+        return "MB0{}".format(id) if id < 10 else "SP{}".format(id)
 

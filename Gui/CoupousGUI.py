@@ -1,44 +1,60 @@
 
 
 import PySimpleGUI as sg
-from Business.CoupousBiz import CoupousBiz
-from DataAccess.CoupousDal import CoupouDal
-
+from SieuThiMiniByPython.Business.CoupousBiz import CoupousBiz
+from SieuThiMiniByPython.DataAccess.CoupousDal import CoupouDal
+from SieuThiMiniByPython.Entity.Coupous import Coupous
+from SieuThiMiniByPython.Common.PopupComfirm import getPopupComfirm
 
 class CoupousGUI:
     def __init__(self):
-        biz = CoupousBiz()
-        self.dulieu = biz.get_all()
-        self.result=[[]]
-        for i in self.dulieu:
-            self.result.append(list(i))
-        self.Headings = ['ID', 'Code', 'Discount', 'Ngày bắt đầu', 'Ngày kết thúc', 'Trạng thái']
+        self.lstCoupous = CoupousBiz().get_all_coupous(cond={"is_active": 1})
+        self.result = []
+
+        for item in self.lstCoupous:
+            item = list(item)
+            item[0] = CoupousBiz().to_str_id(id=item[0])
+
+            self.result.append(item)
+        self.Headings = [' ID ', 'CODE', 'DISCOUNT', 'DATE FROM', 'DATE TO', 'STATUS']
 
         sg.theme('DarkAmber')  # thiết lập theme
 
         # định nghĩa layout cho giao diện
-        layou2 = [[sg.Text('DANH SÁCH PHIẾU GIẢM GIÁ',font="blod",size=70,justification="center")],
+        layou2 = [[sg.Text('DANH SÁCH PHIẾU GIẢM GIÁ',font="blod",size=50,justification="center")],
                   [sg.Table(values=self.result, headings=self.Headings, justification="center", key='-TABLE-',enable_events=True)]]
-        layout1=  [[sg.Text('Chọn từ khóa search:',size=15),sg.Combo(['ID','CODE','DISCOUNT','DATE-FROM','DATE-TO','STATUS'], key='-KEY-'),sg.Text('Content:'),sg.Input(key='-CONTENT-',size=22),sg.Button('SEARCH')],
-                      [sg.Text('Mã giảm giá:',size=15), sg.Input(key=self.Headings[0])],
-                      [sg.Text('Code:',size=15), sg.Input(key=self.Headings[1])],
-                      [sg.Text('Discount:',size=15), sg.Input(key=self.Headings[2])],
-                      [sg.Text('Ngày bắt đầu:',size=15), sg.Input(key=self.Headings[3])],
-                      [sg.Text('Ngày kết thúc:',size=15), sg.Input(key=self.Headings[4])],
-                      [sg.Text('Trạng thái:',size=15), sg.Input(key=self.Headings[5])],
-                      [sg.Button('Tạo mới'), sg.Button('Sửa'),sg.Button('Đổ dữ liệu'), sg.Button('Xóa'),sg.Button('Thêm')]]
+        layout1=  [[sg.Text('Chọn từ khóa search:',size=15),sg.Combo(['id','code','discount','date_from','date_to','status'], default_value="id", key='-COMBO_SEARCH-',enable_events=True),sg.Text('Content:'),sg.Input(key='-CONTENT-',size=22,enable_events=True)],
+                      [sg.Text('ID:',size=15), sg.Text(key=self.Headings[0])],
+                      [sg.Text('CODE:',size=15), sg.Input(key=self.Headings[1])],
+                      [sg.Text('DISCOUNT:',size=15), sg.Input(key=self.Headings[2])],
+                      [sg.Text('DATE FROM:', size=15), sg.Input(size=20, key=self.Headings[3]), sg.CalendarButton('', image_filename='Picture/calendar-24.png', format='%Y-%m-%d', target=self.Headings[3], size=22)],
+                      [sg.Text('DATE TO:', size=15), sg.Input(size=20, key=self.Headings[4]),sg.CalendarButton('', image_filename='Picture/calendar-24.png', format='%Y-%m-%d', target=self.Headings[4], size=22)],
+                      [sg.Text('STATUS:',size=15), sg.Input(key=self.Headings[5])],
+                      [sg.Button('NEW ID'), sg.Button('ADD'),sg.Button('UPDATE'), sg.Button('DELETE'),sg.Button('RESET')]]
 
         layout=[[sg.Col(layou2),sg.Col(layout1)]]
 
         # tạo cửa sổ giao diện
         self.window = sg.Window('Quản lý thành viên', layout)
+
     def empty(self):
-        self.window[self.Headings[0]].update('')
-        self.window[self.Headings[1]].update('')
-        self.window[self.Headings[2]].update('')
-        self.window[self.Headings[3]].update('')
-        self.window[self.Headings[4]].update('')
-        self.window[self.Headings[5]].update('')
+        for item in self.Headings:
+            if item == "Remaining" or item == "Discount":
+                continue
+            self.window[item].update('')
+
+    def reset(self):
+        self.lstCoupous = CoupousBiz().get_all_coupous(cond={"is_active": 1})
+        self.result = []
+
+        for item in self.lstCoupous:
+            item = list(item)
+            item[0] = CoupousBiz().to_str_id(id=item[0])
+
+            self.result.append(item)
+
+        self.window["-TABLE-"].update(self.result)
+
 
 
     def run(self):
@@ -48,105 +64,103 @@ class CoupousGUI:
 
             if event == "Exit" or event == sg.WINDOW_CLOSED:
                 break
-            elif event == 'Tạo mới':
+            elif event == 'NEW ID':
+                newId = CoupousBiz().get_new_id()
 
-                biz= CoupousBiz()
-                id = values[self.Headings[0]]
+                self.empty()
+
+                self.window[self.Headings[0]].update(newId)
+            elif event == 'ADD':
+                id = self.window[self.Headings[0]].get()
                 code = values[self.Headings[1]]
                 discount = values[self.Headings[2]]
                 date_from = values[self.Headings[3]]
                 date_to = values[self.Headings[4]]
                 status = values[self.Headings[5]]
 
-                add = biz.add({'id': id, 'coupou_code': code, 'discount': discount, 'date_from': date_from, 'date_to': date_to, 'status': status, 'is_active': 1})
-                if add:
-                    sg.popup('THÊM THÀNH CÔNG')
-                    self.result.append([values[self.Headings[0]], values[self.Headings[1]], values[self.Headings[2]], values[self.Headings[3]], values[self.Headings[4]], values[self.Headings[5]]])
-                    self.window['-TABLE-'].update(values=self.result)
-                    self.empty()
-                else:
-                    sg.popup('THÊM thất bại')
-            elif event == "Sửa":
-                biz = CoupousBiz()
-                id = values[self.Headings[0]]
+                data = {"id": id[2:], "coupou_code": code, "discount": discount, "date_from": date_from,
+                        "date_to": date_to, "status": status, "is_active": 1}
+                add = CoupousBiz().add_coupous(coupous=data)
+                if add != -1:
+                    sg.popup('Success')
+                    self.reset()
+
+            elif event == "RESET":
+                self.empty()
+                self.reset()
+
+            elif event == "-TABLE-":
+                selected_row = values["-TABLE-"]
+                # binding dữ liệu đến input field
+                if selected_row:
+                    for idx in range(len(self.Headings)):
+                        if self.Headings[idx] == "Discount" or self.Headings[idx] == "Remaining":
+                            continue
+                        self.window[self.Headings[idx]].update(self.result[selected_row[0]][idx])
+            elif event == "DELETE":
+                id = self.window[self.Headings[0]].get()
+                if id == "":
+                    self.reset()
+                    sg.popup("Something error with server")
+
+                while True:
+                    # getPopupComfirm() có thể sài nhiều lần nên t để trong common
+                    event, values = getPopupComfirm().read()
+                    if event in (sg.WIN_CLOSED, 'Cancel'):
+                        break
+                    elif event == "OK":
+                        result = CoupousBiz().delete_coupous(id=id[2:])
+                        if result:
+                            sg.popup("Xóa thành công")
+                            self.reset()
+                            break
+                        else:
+                            self.reset()
+                            sg.popup("Something error with db")
+            elif event == "UPDATE":
+                id = self.window[self.Headings[0]].get()
                 code = values[self.Headings[1]]
                 discount = values[self.Headings[2]]
                 date_from = values[self.Headings[3]]
                 date_to = values[self.Headings[4]]
                 status = values[self.Headings[5]]
 
-                update = biz.update({'coupou_code': code, 'discount': discount, 'date_from': date_from, 'date_to': date_to, 'status': status, 'is_active': 1},{'id': id})
-                if update:
-                    sg.popup("Sửa thành công")
-                    self.result[values['-TABLE-'][0]] = [values[self.Headings[0]], values[self.Headings[1]],
-                                                         values[self.Headings[2]], values[self.Headings[3]],
-                                                         values[self.Headings[4]], values[self.Headings[5]]]
-                    self.window['-TABLE-'].update(values=self.result)
-                    self.empty()
+                data = {"id": id[2:], "coupou_code": code, "discount": discount, "date_from": date_from,
+                        "date_to": date_to, "status": status, "is_active": 1}
 
-            elif event == "Đổ dữ liệu":
-                editRow = values['-TABLE-'][0]
-                sg.popup('Đổ dữ liệu thành công')
-                for i in range(6):
-                    self.window[self.Headings[i]].update(value=self.result[editRow][i])
-            elif event == "Xóa":
-                biz = CoupousBiz()
-                id = values[self.Headings[0]]
-                result = biz.update({'is_active': 0}, {'id': id})
+                flag = any(value == '' for value in data.values())
+                if flag:
+                    sg.popup("Invalid!")
+                    break
 
-                if result:
-                    sg.popup("Xóa thành công")
-                    del self.result[values['-TABLE-'][0]]
-                    self.window['-TABLE-'].update(values=self.result)
-                    self.empty()
+                upd = CoupousBiz().update_coupous(coupous=data, cond={"id": id[2:]})
+                if upd != -1:
+                    sg.popup('Update Success')
+                    self.reset()
                 else:
-                    sg.popup("Xóa thất bại")
-            elif event == 'SEARCH':
-                key = values['-KEY-']
-                biz = CoupousBiz()
-                id = values['-CONTENT-']
-                if key == 'ID':
-                    self.result = biz.get_id(id)
-                    if self.result:
-                        sg.popup("Tìm thành công")
-                        self.window['-TABLE-'].update(values=self.result)
-                    else:
-                        sg.popup("Tìm thất bại")
+                    self.reset()
+                    sg.popup("Something error with db")
 
-                elif key == 'DISCOUNT':
-                    self.result = biz.get_discount(id)
-                    if self.result:
-                        sg.popup("Tìm thành công")
-                        self.window['-TABLE-'].update(values=self.result)
-                    else:
-                        sg.popup("Tìm thất bại")
-                elif key == 'DATE-FROM':
-                    self.result = biz.get_date_from(id)
-                    if self.result:
-                        sg.popup("Tìm thành công")
-                        self.window['-TABLE-'].update(values=self.result)
-                    else:
-                        sg.popup("Tìm thất bại")
-                elif key == 'DATE-TO':
-                    self.result = biz.get_date_to(id)
-                    if self.result:
-                        sg.popup("Tìm thành công")
-                        self.window['-TABLE-'].update(values=self.result)
-                    else:
-                        sg.popup("Tìm thất bại")
-                elif key == 'STATUS':
-                    self.result = biz.get_status(id)
-                    if self.result:
-                        sg.popup("Tìm thành công")
-                        self.window['-TABLE-'].update(values=self.result)
-                    else:
-                        sg.popup("Tìm thất bại")
-                else:
-                    self.dulieu = biz.get_all()
-                    self.result = [[]]
-                    for self.row in self.dulieu:
-                        self.result.append(list(self.row))
-                    self.window['-TABLE-'].update(values= self.result)
+                # sự kiện search onchange
+            elif event == "-CONTENT-":
+                value_search = values["-CONTENT-"]
+                search_with = values["-COMBO_SEARCH-"]
+
+                # binding list to listProduct
+                productEntitys = []
+                for item in self.result:
+                    product = Coupous(*item)
+                    productEntitys.append(product)
+
+                result = []
+                for idx in range(len(productEntitys)):
+                    if value_search in str(getattr(productEntitys[idx], search_with)):
+                        result.append(self.result[idx])
+
+                self.window["-TABLE-"].update(result)
+
+        self.window.close()
+
 
 
 
