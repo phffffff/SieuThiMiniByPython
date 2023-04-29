@@ -6,4 +6,4 @@ class Coupous:
         self.date_from=date_from
         self.date_to=date_to
         self.status=status
-        self.isActive=is_active
+        self.is_active=is_active

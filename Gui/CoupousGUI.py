@@ -1,14 +1,14 @@
 
 
 import PySimpleGUI as sg
-from SieuThiMiniByPython.Business.CoupousBiz import CoupousBiz
-from SieuThiMiniByPython.DataAccess.CoupousDal import CoupouDal
-from SieuThiMiniByPython.Entity.Coupous import Coupous
-from SieuThiMiniByPython.Common.PopupComfirm import getPopupComfirm
+from Business.CoupousBiz import CoupousBiz
+from DataAccess.CoupousDal import CoupouDal
+from Entity.Coupous import Coupous
+from Common.PopupComfirm import getPopupComfirm
 
 class CoupousGUI:
     def __init__(self):
-        self.lstCoupous = CoupousBiz().get_all_coupous(cond={"is_active": 1})
+        self.lstCoupous = CoupousBiz().get_all_coupous()
         self.result = []
 
         for item in self.lstCoupous:
@@ -16,20 +16,21 @@ class CoupousGUI:
             item[0] = CoupousBiz().to_str_id(id=item[0])
 
             self.result.append(item)
-        self.Headings = [' ID ', 'CODE', 'DISCOUNT', 'DATE FROM', 'DATE TO', 'STATUS']
+        self.Headings = ['Id', 'Coupous Code', 'Discount', 'Date From', 'Date To', 'Status','IsActive']
 
         sg.theme('DarkAmber')  # thiết lập theme
 
         # định nghĩa layout cho giao diện
         layou2 = [[sg.Text('DANH SÁCH PHIẾU GIẢM GIÁ',font="blod",size=50,justification="center")],
                   [sg.Table(values=self.result, headings=self.Headings, justification="center", key='-TABLE-',enable_events=True)]]
-        layout1=  [[sg.Text('Chọn từ khóa search:',size=15),sg.Combo(['id','code','discount','date_from','date_to','status'], default_value="id", key='-COMBO_SEARCH-',enable_events=True),sg.Text('Content:'),sg.Input(key='-CONTENT-',size=22,enable_events=True)],
+        layout1=  [[sg.Text('Chọn từ khóa search:',size=15),sg.Combo(['id','code','discount','date_from','date_to','status', "is_active"], default_value="id", key='-COMBO_SEARCH-',enable_events=True),sg.Text('Content:'),sg.Input(key='-CONTENT-',size=22,enable_events=True)],
                       [sg.Text('ID:',size=15), sg.Text(key=self.Headings[0])],
                       [sg.Text('CODE:',size=15), sg.Input(key=self.Headings[1])],
                       [sg.Text('DISCOUNT:',size=15), sg.Input(key=self.Headings[2])],
                       [sg.Text('DATE FROM:', size=15), sg.Input(size=20, key=self.Headings[3]), sg.CalendarButton('', image_filename='Picture/calendar-24.png', format='%Y-%m-%d', target=self.Headings[3], size=22)],
                       [sg.Text('DATE TO:', size=15), sg.Input(size=20, key=self.Headings[4]),sg.CalendarButton('', image_filename='Picture/calendar-24.png', format='%Y-%m-%d', target=self.Headings[4], size=22)],
                       [sg.Text('STATUS:',size=15), sg.Input(key=self.Headings[5])],
+                      [sg.Text('ISACTIVE:',size=15), sg.Input(key=self.Headings[6])],
                       [sg.Button('NEW ID'), sg.Button('ADD'),sg.Button('UPDATE'), sg.Button('DELETE'),sg.Button('RESET')]]
 
         layout=[[sg.Col(layou2),sg.Col(layout1)]]
@@ -39,12 +40,10 @@ class CoupousGUI:
 
     def empty(self):
         for item in self.Headings:
-            if item == "Remaining" or item == "Discount":
-                continue
             self.window[item].update('')
 
     def reset(self):
-        self.lstCoupous = CoupousBiz().get_all_coupous(cond={"is_active": 1})
+        self.lstCoupous = CoupousBiz().get_all_coupous()
         self.result = []
 
         for item in self.lstCoupous:
@@ -70,6 +69,7 @@ class CoupousGUI:
                 self.empty()
 
                 self.window[self.Headings[0]].update(newId)
+                self.window[self.Headings[6]].update(1)
             elif event == 'ADD':
                 id = self.window[self.Headings[0]].get()
                 code = values[self.Headings[1]]
@@ -83,6 +83,7 @@ class CoupousGUI:
                 add = CoupousBiz().add_coupous(coupous=data)
                 if add != -1:
                     sg.popup('Success')
+                    self.empty()
                     self.reset()
 
             elif event == "RESET":
@@ -94,8 +95,6 @@ class CoupousGUI:
                 # binding dữ liệu đến input field
                 if selected_row:
                     for idx in range(len(self.Headings)):
-                        if self.Headings[idx] == "Discount" or self.Headings[idx] == "Remaining":
-                            continue
                         self.window[self.Headings[idx]].update(self.result[selected_row[0]][idx])
             elif event == "DELETE":
                 id = self.window[self.Headings[0]].get()
@@ -112,9 +111,11 @@ class CoupousGUI:
                         result = CoupousBiz().delete_coupous(id=id[2:])
                         if result:
                             sg.popup("Xóa thành công")
+                            self.empty()
                             self.reset()
                             break
                         else:
+                            self.empty()
                             self.reset()
                             sg.popup("Something error with db")
             elif event == "UPDATE":
@@ -129,15 +130,20 @@ class CoupousGUI:
                         "date_to": date_to, "status": status, "is_active": 1}
 
                 flag = any(value == '' for value in data.values())
+                flagUpt = False
                 if flag:
+                    self.empty()
                     sg.popup("Invalid!")
-                    break
-
+                    flagUpt = True
+                if not flagUpt:
+                    upd = CoupousBiz().update_coupous(coupous=data, cond={"id": id[2:]})
                 upd = CoupousBiz().update_coupous(coupous=data, cond={"id": id[2:]})
                 if upd != -1:
                     sg.popup('Update Success')
+                    self.empty()
                     self.reset()
                 else:
+                    self.empty()
                     self.reset()
                     sg.popup("Something error with db")
 

@@ -1,6 +1,6 @@
 
 
-from SieuThiMiniByPython.DataAccess.MembershipsDal import MembershipsDal
+from DataAccess.MembershipsDal import MembershipsDal
 
 class MembershipsBiz:
     def __init__(self):

@@ -40,13 +40,11 @@ class Crud_Dal:
     # cond = "is_active = 1 and username = '{}' and password = {}".format(username, password)
     # result = intanceDal.findDataWithCond(cond=cond)
     def findDataWithCond(
-    def findDataWithCond(
             self,
             # table,
             fields='*',
             where=None,
             order_by=None,
-            limit=None
             limit=None
     ):
         try:
