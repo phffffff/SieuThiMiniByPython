@@ -29,6 +29,12 @@ class ProductBiz:
         if result == -1:
             return -1
         return  result
+    
+    def update_payment(self, count,cond):
+        result = self.dal.update_decrease(count=count, where=cond)
+        if result == -1:
+            return -1
+        return result
 
     def delete_product(self, id):
         result = self.dal.update(update_data={"is_active":0},where_data={"id":id})
@@ -47,6 +53,8 @@ class ProductBiz:
 
     def to_str_id(seft, id):
         return "SP0{}".format(id) if id < 10 else "SP{}".format(id)
+    
+    
 
 
 

@@ -8,8 +8,8 @@ from Gui.HomeGUI import HomeGUI
 # Memberships = MembershipsGui()
 # Memberships.run()
 
-coupousGUI = CoupousGUI()
-coupousGUI.run()
+# coupousGUI = CoupousGUI()
+# coupousGUI.run()
 
 # Staff = StaffsGui()
 # Staff.run()
@@ -19,7 +19,7 @@ coupousGUI.run()
 # ProductTest = ProductTypeGUI()
 # ProductTest.run()
 
-# home = HomeGUI()
-# home.run()
+home = HomeGUI(1)
+home.run()
 
 

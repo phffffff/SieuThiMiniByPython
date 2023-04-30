@@ -37,15 +37,22 @@ class MembershipsBiz:
             return -1
         return result
 
-    def get_new_id(seft):
-        result = seft.dal.findDataWithJson(fields=['id'], order_by="id DESC", limit=1)
+    def get_new_id(self):
+        result = self.dal.findDataWithJson(fields=['id'], order_by="id DESC", limit=1)
 
         if result:
             currentId = result[0]
             temp = int(currentId + 1)
-            return seft.to_str_id(temp)
+            return self.to_str_id(temp)
         return "MB01"
 
-    def to_str_id(seft, id):
+    def to_str_id(self, id):
         return "MB0{}".format(id) if id < 10 else "SP{}".format(id)
 
+    def check_membership(self, id):
+        result = self.dal.findDataWithJson(where={"is_active":1, "id": id})
+        if result:
+            return result
+        return []
+    
+    

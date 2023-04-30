@@ -9,10 +9,7 @@ class Crud_Dal:
     def findDataWithJson(self, fields='*',where=None, order_by=None, limit=None):
         try:
             query = f"SELECT {', '.join(fields) if isinstance(fields, list) else fields} FROM {self.tableName}"
-            query = f"SELECT {', '.join(fields) if isinstance(fields, list) else fields} FROM {self.tableName}"
 
-            if where:
-                condition_string = " AND ".join([f"{key}=%s" for key in where.keys()])
             if where:
                 condition_string = " AND ".join([f"{key}=%s" for key in where.keys()])
                 query += f" WHERE {condition_string}"
@@ -41,7 +38,6 @@ class Crud_Dal:
     # result = intanceDal.findDataWithCond(cond=cond)
     def findDataWithCond(
             self,
-            # table,
             fields='*',
             where=None,
             order_by=None,
@@ -51,18 +47,13 @@ class Crud_Dal:
             sql = f"SELECT {', '.join(fields) if isinstance(fields, list) else fields} FROM {self.tableName}"
             if where:
                 sql += f" WHERE {where}"
-                sql += f" WHERE {where}"
             if order_by:
                 sql += f" ORDER BY {order_by}"
             if limit:
                 sql += f" LIMIT {limit}"
 
             result = self.conn.execute_one(sql)
-            result = self.conn.execute_one(sql)
             self.conn.commit()
-            self.conn.close()
-            if result:
-                return result
             self.conn.close()
             if result:
                 return result
@@ -121,11 +112,7 @@ class Crud_Dal:
             params = tuple(where.values()) if where else None
 
             results = self.conn.execute_all(sql, params)
-            results = self.conn.execute_all(sql, params)
             self.conn.commit()
-            self.conn.close()
-            if results:
-                return results
             self.conn.close()
             if results:
                 return results
