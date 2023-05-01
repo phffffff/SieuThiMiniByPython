@@ -1,5 +1,5 @@
-from Gui.MembershipsGui import MembershipsGui
+from Gui.Memberships import Memberships
 from Gui.CoupousGUI import CoupousGUI
 from Gui.LoginGui import LoginGUI
-Memberships = MembershipsGui()
+Memberships = Memberships()
 Memberships.run()
