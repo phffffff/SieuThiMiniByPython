@@ -144,6 +144,7 @@ class Crud_Dal:
     """
     use:    
     use:    
+    use:    
         update_data = {"name": "John", "age": 30}
         where_data = {"id": 1}
         instanceDal.update("tên bảng", update_data, where_data)

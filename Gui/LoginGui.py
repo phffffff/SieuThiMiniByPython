@@ -2,7 +2,7 @@ import logging
 
 import PySimpleGUI as sg
 
-from Business.AccountBiz import AccountBiz
+from Business.AccountsBiz import AccountBiz
 
 class LoginGUI:
     def __init__(self):

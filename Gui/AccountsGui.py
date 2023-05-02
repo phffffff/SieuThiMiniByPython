@@ -1,55 +1,54 @@
 
 
 import PySimpleGUI as sg
-from Business.StaffsBiz import StaffsBiz
-from DataAccess.StaffsDal import StaffsDal
+from Business.AccountsBiz import AccountsBiz
+from DataAccess.AccountsDal import AccountsDal
 from Common.PopupComfirm import getPopupComfirm
-from Entity.StaffsEntity import Staffs
+from Entity.AccountsEntity import Accounts
 
 
-class StaffsGui:
+class AccountsGui:
 
 
     def __init__(self):
 
-        self.Headings = ['ID', 'Tên', 'Ngày sinh', 'Số điện thoại', 'Mail', 'account']
+        self.Headings = ['ID', 'User name', 'password', 'roleId', 'status']
 
-        self.lstStaffs = StaffsBiz().get_all_staffs()
+        self.lstAccounts = AccountsBiz().get_all_accounts()
         self.result = []
 
-        for item in self.lstStaffs:
+        for item in self.lstAccounts:
             item = list(item)
-            item[0] = StaffsBiz().to_str_id(id=item[0])
+            item[0] = AccountsBiz().to_str_id(id=item[0])
 
             self.result.append(item)
         sg.theme('DarkAmber')  # thiết lập theme
 
         # định nghĩa layout cho giao diện
-        layou2 = [[sg.Text('DANH SÁCH NHÂN VIÊN',font="blod",size=70,justification="center")],
+        layou2 = [[sg.Text('DANH SÁCH TÀI KHOẢN',font="blod",size=70,justification="center")],
                   [sg.Table(values=self.result, headings=self.Headings, justification="center", key='-TABLE-',enable_events=True)]]
-        layout1=  [[sg.Text('Chọn từ khóa search:',size=15),sg.Combo(['ID','NAME','BIRTHDAY','PHONE','MAIL','ACCOUNT'], default_value="id", key='-COMBO_SEARCH-',enable_events=True),sg.Text('Content:'),sg.Input(key='-CONTENT-',size=22,enable_events=True)],
-                      [sg.Text('Id:',size=15), sg.Text (key=self.Headings[0])],
-                      [sg.Text('Name:',size=15), sg.Input(key=self.Headings[1])],
-                      [sg.Text('Birthday:',size=15),  sg.Input(size=20, key=self.Headings[2]), sg.CalendarButton('', image_filename='Picture/calendar-24.png', format='%Y-%m-%d', target=self.Headings[2], size=22)],
-                      [sg.Text('Phone:',size=15), sg.Input(key=self.Headings[3])],
-                      [sg.Text('Mail:',size=15), sg.Input(key=self.Headings[4])],
-                      [sg.Text('account:',size=15), sg.Input(key=self.Headings[5])],
+        layout1=  [[sg.Text('Chọn từ khóa search:',size=15),sg.Combo(['ID','USERNAME','PASSWORD','ROLE_ID','STATUS'], default_value="id", key='-COMBO_SEARCH-',enable_events=True),sg.Text('Content:'),sg.Input(key='-CONTENT-',size=22,enable_events=True)],
+                      [sg.Text('Id:',size=15), sg.Text(key=self.Headings[0])],
+                      [sg.Text('Username:',size=15), sg.Input(key=self.Headings[1])],
+                      [sg.Text('Password:',size=15),  sg.Input(key=self.Headings[2]),
+                      [sg.Text('Role_id:',size=15), sg.Input(key=self.Headings[3])],
+                      [sg.Text('Status:',size=15), sg.Input(key=self.Headings[4])],
                       [sg.Button('NEW ID'), sg.Button('ADD'),sg.Button('UPDATE'), sg.Button('DELETE'),sg.Button('RESET')]]
 
         layout=[[sg.Col(layou2),sg.Col(layout1)]]
 
         # tạo cửa sổ giao diện
-        self.window = sg.Window('Quản lý nhân viên', layout)
+        self.window = sg.Window('Quản lý tai khoan', layout)
     def empty(self):
         for item in self.Headings:
             self.window[item].update('')
     def reset(self):
-        self.lstStaffs = StaffsBiz().get_all_staffs()
+        self.lstAccounts = AccountsBiz().get_all_accounts()
         self.result = []
 
-        for item in self.lstStaffs:
+        for item in self.lstAccounts:
             item = list(item)
-            item[0] = StaffsBiz().to_str_id(id=item[0])
+            item[0] = AccountsBiz().to_str_id(id=item[0])
 
             self.result.append(item)
 
@@ -63,23 +62,22 @@ class StaffsGui:
             if event == "Exit" or event == sg.WINDOW_CLOSED:
                 break
             elif event == 'NEW ID':
-                newId = StaffsBiz().get_new_id()
+                newId = AccountsBiz().get_new_id()
 
                 self.empty()
 
                 self.window[self.Headings[0]].update(newId)
-                self.window[self.Headings[5]].update(1)
+                self.window[self.Headings[4]].update(1)
 
             elif event == 'ADD':
                 id = self.window[self.Headings[0]].get()
-                name = values[self.Headings[1]]
-                age = values[self.Headings[2]]
-                phone = values[self.Headings[3]]
-                mail = values[self.Headings[4]]
-                account = values[self.Headings[5]]
+                username = values[self.Headings[1]]
+                password = values[self.Headings[2]]
+                role_id = values[self.Headings[3]]
+                status = values[self.Headings[4]]
 
-                staff = {"id":id[2:], 'name': name, 'birthday': age, 'phone': phone, 'mail': mail, 'account': account, 'is_active': 1}
-                add = StaffsBiz().add_staffs(staffs=staffs)
+                account = {"id":id[2:], 'username': username, 'password': password, 'role_id': role_id, 'status': status, 'is_active': 1}
+                add = AccountsBiz().add_accounts(accounts=accounts)
                 if add != -1:
                     sg.popup('Success')
                 self.empty()
@@ -106,7 +104,7 @@ class StaffsGui:
                     if event in (sg.WIN_CLOSED, 'Cancel'):
                         break
                     elif event == "OK":
-                        result = StaffsBiz().delete_staffs(id=id[2:])
+                        result = AccountsBiz().delete_accounts(id=id[2:])
                         if result:
                             sg.popup("Xóa thành công")
                             self.empty()
@@ -117,16 +115,15 @@ class StaffsGui:
                             self.reset()
                             sg.popup("Something error with db")
             elif event == "UPDATE":
-                biz = StaffsBiz()
+                biz = AccountsBiz()
                 id = values[self.Headings[0]]
-                name = values[self.Headings[1]]
-                age = values[self.Headings[2]]
-                phone = values[self.Headings[3]]
-                mail = values[self.Headings[4]]
-                account = values[self.Headings[5]]
-                is_active = values[self.Headings[6]]
+                username = values[self.Headings[1]]
+                password = values[self.Headings[2]]
+                role_id = values[self.Headings[3]]
+                status = values[self.Headings[4]]
+                is_active = values[self.Headings[5]]
 
-                data  = {"id":id[2:], 'name': name, 'birthday': age, 'phone': phone, 'mail': mail, 'account': account, 'is_active': is_active}
+                data  = {"id":id[2:], 'username': username, 'password': password, 'role_id': role_id, 'status': status, 'is_active': is_active}
 
                 flag = any(value == '' for value in data.values())
                 flagUpt = False
@@ -134,7 +131,7 @@ class StaffsGui:
                     sg.popup("Invalid!")
                     flagUpt = True
                 if not flagUpt:
-                    upd = StaffsBiz().update_staffs(staffs=data, cond={"id": id[2:]})
+                    upd = AccountsBiz().update_accounts(accounts=data, cond={"id": id[2:]})
 
                     if upd != -1:
                         sg.popup('Update Success')
@@ -153,7 +150,7 @@ class StaffsGui:
                     # binding list to listProduct
                     productEntitys = []
                     for item in self.result:
-                        product = Staffs(*item)
+                        product = Acccounts(*item)
                         productEntitys.append(product)
 
                     result = []

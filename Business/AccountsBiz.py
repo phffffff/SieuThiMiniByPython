@@ -1,38 +1,38 @@
 
 
-from DataAccess.StaffsDal import StaffsDal
+from DataAccess.AccountsDal import AccountsDal
 
 
-class StaffsBiz:
+class AccountsBiz:
     def __init__(self):
-        self.dal = StaffsDal()
+        self.dal = AccountsDal()
 
-    def get_all_staffs(self, cond=None):
+    def get_all_accounts(self, cond=None):
         result = self.dal.listDataWithJson(where=cond, order_by="id ASC")
         if result:
             return result
         return []
 
-    def find_staffs_with_cond(self, key, value):
+    def find_accounts_with_cond(self, key, value):
         # mặc định nó sẽ tìm 1 row vì t để fetch_one, còn key
         result = self.dal.findDataWithJson(where={"{}".format(key): value})
         if result:
             return result
         return None
 
-    def add_staffs(self, staffs):
-        result = self.dal.insert(staffs)
+    def add_accounts(self, accounts):
+        result = self.dal.insert(accounts)
         if result == -1:
             return -1
         return result
 
-    def update_staffs(self, staffs, cond):
-        result = self.dal.update(update_data=staffs, where_data=cond)
+    def update_accounts(self, accounts, cond):
+        result = self.dal.update(update_data=accounts, where_data=cond)
         if result == -1:
             return -1
         return result
 
-    def delete_staffs(self, id):
+    def delete_accounts(self, id):
         result = self.dal.update(update_data={"is_active": 0}, where_data={"id": id})
         if result == -1:
             return -1
