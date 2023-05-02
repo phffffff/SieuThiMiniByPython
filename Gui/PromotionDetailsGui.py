@@ -1,11 +1,10 @@
 import PySimpleGUI as sg
 from Business.PromotionsBiz import PromotionsBiz
 from Entity.Promotions import Promotions
-from Gui.PromotionDetailsGui import PromotionDetailsGui
 
 
-class PromotionsGUI:
-    def __init__(self):
+class PromotionDetailsGui:
+    def __init__(self,promotion_id):
         sg.theme('DarkBlue2')
         sg.set_options(background_color='#272727', text_color='#ffffff')
         self.dulieu = PromotionsBiz().get_all_promotion()
@@ -22,12 +21,11 @@ class PromotionsGUI:
         self.Headings = ['Mã khuến mãi', 'Tên chương trình', 'Ngày bắt đầu', 'Ngày kết thúc', 'Trạng thái','Kích hoạt']
         sg.theme('DarkAmber')  # thiết lập theme
         # định nghĩa layout cho giao diện
-        layout1 = [[sg.Text('Mã khuyến mãi:', size=15),sg.Button("ID" , key= "NEWID") ,sg.Input(size=20 , key=self.Headings[0])],
-                   [sg.Text('Tên chương trình:', size=15), sg.Input(size=25 ,key=self.Headings[1])],
-                   [sg.Text('Ngày bắt đầu:', size=15),sg.CalendarButton('', image_filename='Picture/calendar-24.png', format='%Y-%m-%d', target=self.Headings[2], size=22), sg.Input(size=20 ,key=self.Headings[2])],
-                   [sg.Text('Ngày kết thúc:', size=15), sg.CalendarButton('', image_filename='Picture/calendar-24.png', format='%Y-%m-%d', target=self.Headings[3], size=22), sg.Input(size=20 ,key=self.Headings[3])],
-                   [sg.Text('Trạng thái:', size=15), sg.Combo(['Áp dụng','Không áp dụng'],default_value='Áp dụng', key='-COMBO_STATUS-')],
-                   [ sg.Button('Thêm'), sg.Button('Sửa'), sg.Button('Chi tiết'), sg.Button('Xóa')],
+        layout1 = [[sg.Text('Mã khuyến mãi:', size=15),sg.Text(text='KM'+promotion_id,size=20 , key=self.Headings[0])],
+                   [sg.Text('Mã sản phẩm:', size=15),sg.Button('...', key='SELECT_PRODUCT') ,sg.Input(size=15 ,key=self.Headings[1])],
+                   [sg.Text('Giá:', size=15), sg.Input(size=20 ,key=self.Headings[2])],
+                   [sg.Text('Trạng thái:', size=15), sg.Input(size=20,key=self.Headings[3] ,default_text=1)],
+                   [ sg.Button('Thêm'), sg.Button('Sửa'), sg.Button('Xóa')],
                    ]
         # tạo table
         table = sg.Table(values=self.result, headings=self.Headings, justification="center", key='-TABLE-', enable_events=True)
@@ -155,12 +153,6 @@ class PromotionsGUI:
                         result.append(self.result[idx])
 
                 self.window['-TABLE-'].update(result)
-            elif event=='Chi tiết':
-                id = values[self.Headings[0]]
-                if id=="":
-                    sg.popup('Bạn chưa chọn khuyến mãi !')
-                else:
-                    promotiondetail = PromotionDetailsGui(promotion_id=id[2:])
-                    promotiondetail.run()
+
 
 
