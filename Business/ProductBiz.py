@@ -30,11 +30,18 @@ class ProductBiz:
             return -1
         return  result
     
-    def update_payment(self, count,cond):
-        result = self.dal.update_decrease(count=count, where=cond)
-        if result == -1:
-            return -1
-        return result
+    def update_payment(self, count,cond, key):
+        if key == "decrease":
+            result = self.dal.update_decrease(count=count, where=cond)
+            if result == -1:
+                return -1
+            return result
+        
+        elif key == "increase":
+            result = self.dal.update_increase(count=count, where=cond)
+            if result == -1:
+                return -1
+            return result    
 
     def delete_product(self, id):
         result = self.dal.update(update_data={"is_active":0},where_data={"id":id})

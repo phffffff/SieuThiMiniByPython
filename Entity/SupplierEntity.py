@@ -3,4 +3,4 @@ class Supplier:
         self.id=id
         self.name=name
         self.addr=addr
-        self.is_active=is_active
+        self.status=is_active

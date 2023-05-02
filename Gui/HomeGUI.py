@@ -452,7 +452,7 @@ class HomeGUI:
                         if flagIvd == -1:
                             break
                         
-                        flagPrdct = ProductBiz().update_payment(count=invoices_detail["count"],cond={'id':invoices_detail["product_id"]})
+                        flagPrdct = ProductBiz().update_payment(count=invoices_detail["count"],cond={'id':invoices_detail["product_id"]},key="decrease")
                         if flagPrdct == -1:
                             break
                     if membership_id:

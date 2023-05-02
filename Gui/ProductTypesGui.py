@@ -103,9 +103,11 @@ class ProductTypeGUI:
 
                 while True:
                     # getPopupComfirm() có thể sài nhieuf lần nên t để trong common
-                    event, values = getPopupComfirm().read()
+                    wd = getPopupComfirm()
+                    event, values = wd.read()
+                    
                     if event == sg.WIN_CLOSED or event == "Cancel":
-                        break
+                        wd.close()
                     elif event == "OK":
                         result = ProductTypesBiz().delete_product_type(id=id[2:])
                         if result:
