@@ -3,6 +3,26 @@ class PromotionsBiz:
     def __init__(self):
         self.dal = PromotionDal()
 
+    def get_info_promotion(self, cond=None, fields="*"):
+        result = self.dal.listDataWithJson(where=cond,fields=fields,order_by="id ASC")
+        if result:
+            count_active = 0
+            count_no_active  = 0
+            ctkm_apdung = ""
+            for item in result:
+                if item[4] == 1:
+                    ctkm_apdung = item[1]
+                if item[5] == 1:
+                    count_active += 1
+                if item[5] == 0:
+                    count_no_active += 1
+            return {
+                "hoatdong": count_active,
+                "kohoatdong":count_no_active,
+                "apdung":ctkm_apdung,
+            }
+        return 0
+
     def get_all_promotion(self, cond=None, fields="*"):
         result = self.dal.listDataWithJson(where=cond, fields=fields, order_by="id DESC")
         if result:

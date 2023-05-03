@@ -5,6 +5,22 @@ class SuppliersBiz:
     def __init__(self):
         self.dal = SuppliersDal()
 
+    def get_info_spplr(self, cond=None, fields="*"):
+        result = self.dal.listDataWithJson(where=cond,fields=fields,order_by="id ASC")
+        if result:
+            count_active = 0
+            count_no_active  = 0
+            for item in result:
+                if item[3] == 1:
+                    count_active += 1
+                if item[3] == 0:
+                    count_no_active += 1
+            return {
+                "hoatdong": count_active,
+                "kohoatdong":count_no_active,
+            }
+        return 0
+
     def get_all_suppliers(self, cond=None, fields="*"):
         result = self.dal.listDataWithJson(where=cond, fields=fields, order_by="id DESC")
         if result:

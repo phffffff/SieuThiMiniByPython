@@ -5,6 +5,22 @@ class ProductTypesBiz:
     def __init__(self):
         self.dal = ProductTypesDal()
 
+    def get_info_prdctTp(self, cond=None, fields="*"):
+        result = self.dal.listDataWithJson(where=cond,fields=fields,order_by="id ASC")
+        if result:
+            count_active = 0
+            count_no_active  = 0
+            for item in result:
+                if item[2] == 1:
+                    count_active += 1
+                if item[2] == 0:
+                    count_no_active += 1
+            return {
+                "hoatdong": count_active,
+                "kohoatdong":count_no_active,
+            }
+        return 0
+
     def get_all_product_types(self, cond=None, fields="*"):
         result = self.dal.listDataWithJson(where=cond, fields=fields, order_by="id DESC")
         if result:

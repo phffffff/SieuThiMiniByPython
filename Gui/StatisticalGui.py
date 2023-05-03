@@ -1,20 +1,55 @@
 import PySimpleGUI as sg
+from Business.AccountsBiz import AccountsBiz
+from Business.StaffsBiz import StaffsBiz
+from Business.ProductTypesBiz import ProductTypesBiz
+from Business.ProductBiz import ProductBiz
+from Business.PromotionsBiz import PromotionsBiz
+from Business.CoupousBiz import CoupousBiz
+from Business.SuppliersBiz import SuppliersBiz
+from Business.MembershipsBiz import MembershipsBiz
 class Statistical:
     def __init__(self):
         sg.theme('DarkBlue2')
         sg.set_options(background_color='#272727', text_color='#ffffff')
         default_with =900
         default_height = 500
+
+        self.ttAccount = AccountsBiz().get_info_account()
+        self.infoAccount = 'Số tài khoản được cấp: {}\nSố tài khoản hoạt động: {}\nSố tài khoản không hoạt động:{}'.format(self.ttAccount["cap"],self.ttAccount["hoatdong"],self.ttAccount["kohoatdong"])
+
+        self.ttStaff = StaffsBiz().get_info_staff()
+        self.infoStaff = 'Tổng số nhân viên hoạt động: {}\nTổng số nhân viên thôi làm:{}'.format(self.ttStaff["hoatdong"],self.ttStaff["kohoatdong"])
+
+        self.ttPrdctTp = ProductTypesBiz().get_info_prdctTp()
+        self.infoPrdctTp = 'Tổng số loại sản phẩm tồn tại: {}\nTổng số loại sản phẩm không tồn tại:{}'.format(self.ttPrdctTp["hoatdong"],self.ttPrdctTp["kohoatdong"])
+
+        self.ttPrdct = ProductBiz().get_info_prdct()
+        self.infoPrdct = 'Tổng số sản phẩm tồn tại: {}\nTổng số sản phẩm không tồn tại:{}'.format(self.ttPrdct["hoatdong"],self.ttPrdct["kohoatdong"])
+
+        self.ttSpplr = SuppliersBiz().get_info_spplr()
+        self.infoSpplr = 'Tổng số nhân viên hoạt động: {}\nTổng số nhân viên thôi làm:{}'.format(self.ttSpplr["hoatdong"],self.ttSpplr["kohoatdong"])
+
+        self.ttPromotion = PromotionsBiz().get_info_promotion()
+        self.infoPromotion = 'Tổng số ct khuyến mãi đã tạo: {}\nTổng số ct khuyến mãi đã xóa:{}\nCT Khuyến mãi đang áp dụng là: {}'.format(self.ttPromotion["hoatdong"],self.ttPromotion["kohoatdong"],self.ttPromotion["apdung"])
+
+        self.ttCoupou = CoupousBiz().get_info_coupou()
+        self.infoCoupou = 'Tổng số voucher đã tồn tại: {}\nTổng số voucher đã đã xóa:{}\nTổng số voucher đã chưa sử dụng: {}\nTổng số voucher đã sử dụng: {}'.format(self.ttCoupou["hoatdong"],self.ttCoupou["kohoatdong"],self.ttCoupou["sudung"],self.ttCoupou["chuasudung"])
+
+        self.ttMem = MembershipsBiz().get_info_mem()
+        self.infoMem = 'Tổng số thành viên tồn tại: {}\nSố thành viên ngừng sử dụng:{}'.format(self.ttMem["hoatdong"],self.ttMem["kohoatdong"])
+        
+
+
         # TABLAYOUT Tổng kết
         self.key_statistical = ['accounts','staff','memberships','product_types','products','suppliers','coupous','promotions']
-        layout_00 = [[sg.Text('Tài khoản',font=17)],[sg.Text('1',size=10,justification='center' , font=13, key=self.key_statistical[0] )]]
-        layout_01 = [[sg.Text('Nhân viên',font=17)],[sg.Text('2',size=10,justification='center', font=13 , key=self.key_statistical[1])]]
-        layout_02 = [[sg.Text('Thành viên',font=17)],[sg.Text('3',size=10,justification='center', font=13, key=self.key_statistical[2])]]
-        layout_10 = [[sg.Text('Loại Sản Phẩm',font=17)],[sg.Text('4',size=10,justification='center', font=13, key=self.key_statistical[3])]]
-        layout_11 = [[sg.Text('Sản phẩm',font=17)],[sg.Text('5',size=10,justification='center', font=13, key=self.key_statistical[4])]]
-        layout_12 = [[sg.Text('Nhà cung cấp',font=17)],[sg.Text('6',size=10,justification='center', font=13, key=self.key_statistical[5])]]
-        layout_20 = [[sg.Text('Phiếu giảm giá',font=17)],[sg.Text('7',size=10,justification='center', font=13, key=self.key_statistical[6])]]
-        layout_21 = [[sg.Text('Chương trình khuyến mãi',font=17)],[sg.Text('8',size=10,justification='center', font=13, key=self.key_statistical[7])]]
+        layout_00 = [[sg.Text('Tài khoản',font=17)],[sg.Multiline(disabled=True,size=(50,40),default_text=self.infoAccount,justification='center' , font=13, key=self.key_statistical[0])]]
+        layout_01 = [[sg.Text('Nhân viên',font=17)],[sg.Multiline(disabled=True,size=(50,40),default_text=self.infoStaff,justification='center', font=13 , key=self.key_statistical[1])]]
+        layout_02 = [[sg.Text('Thành viên',font=17)],[sg.Multiline(disabled=True,size=(50,40),default_text=self.infoMem,justification='center', font=13, key=self.key_statistical[2])]]
+        layout_10 = [[sg.Text('Loại Sản Phẩm',font=17)],[sg.Multiline(disabled=True,size=(50,40),default_text=self.infoPrdctTp,justification='center', font=13, key=self.key_statistical[3])]]
+        layout_11 = [[sg.Text('Sản phẩm',font=17)],[sg.Multiline(disabled=True,size=(50,40),default_text=self.infoPrdct,justification='center', font=13, key=self.key_statistical[4])]]
+        layout_12 = [[sg.Text('Nhà cung cấp',font=17)],[sg.Multiline(disabled=True,size=(50,40),default_text=self.infoSpplr,justification='center', font=13, key=self.key_statistical[5])]]
+        layout_20 = [[sg.Text('Phiếu giảm giá',font=17)],[sg.Multiline(disabled=True,size=(50,40),default_text=self.infoCoupou,justification='center', font=13, key=self.key_statistical[6])]]
+        layout_21 = [[sg.Text('Chương trình khuyến mãi',font=17)],[sg.Multiline(disabled=True,size=(50,40),default_text=self.infoPromotion,justification='center', font=13, key=self.key_statistical[7])]]
         frame_size = (int(default_with/3) , int(default_height/3)) #đặt kích thước chung trừ chương trình khuyến mãi
         # Tạo layout Tổng quát
         grid_layout = [

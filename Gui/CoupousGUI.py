@@ -14,6 +14,14 @@ class CoupousGUI:
         for item in self.lstCoupous:
             item = list(item)
             item[0] = CoupousBiz().to_str_id(id=item[0])
+            if item[5] == 1:
+                item[5] = "Chưa sử dụng"
+            elif item[5] == 0:
+                item[5] = "Sử dụng rồi"
+            if item[6] == 1:
+                item[6] = "Tồn tại"
+            elif item[6] == 0:
+                item[6] = "Không tồn tại"
 
             self.result.append(item)
         self.Headings = ['Id', 'Coupous Code', 'Discount', 'Date From', 'Date To', 'Status','IsActive']
@@ -29,8 +37,8 @@ class CoupousGUI:
                       [sg.Text('DISCOUNT:',size=15), sg.Input(key=self.Headings[2])],
                       [sg.Text('DATE FROM:', size=15), sg.Input(size=20, key=self.Headings[3]), sg.CalendarButton('', image_filename='Picture/calendar-24.png', format='%Y-%m-%d', target=self.Headings[3], size=22)],
                       [sg.Text('DATE TO:', size=15), sg.Input(size=20, key=self.Headings[4]),sg.CalendarButton('', image_filename='Picture/calendar-24.png', format='%Y-%m-%d', target=self.Headings[4], size=22)],
-                      [sg.Text('STATUS:',size=15), sg.Input(key=self.Headings[5])],
-                      [sg.Text('ISACTIVE:',size=15), sg.Input(key=self.Headings[6])],
+                      [sg.Text('STATUS:',size=15), sg.Combo(values=["Chưa sử dụng", "Sử dụng rồi"],default_value="Chưa sử dụng",key=self.Headings[5])],
+                      [sg.Text('ISACTIVE:',size=15), sg.Combo(values=["Tồn tại", "Không tồn tại"],default_value="Hoạt động",key=self.Headings[6])],
                       [sg.Button('NEW ID'), sg.Button('ADD'),sg.Button('UPDATE'), sg.Button('DELETE'),sg.Button('RESET')]]
 
         layout=[[sg.Col(layou2),sg.Col(layout1)]]
@@ -49,6 +57,14 @@ class CoupousGUI:
         for item in self.lstCoupous:
             item = list(item)
             item[0] = CoupousBiz().to_str_id(id=item[0])
+            if item[5] == 1:
+                item[5] = "Chưa sử dụng"
+            elif item[5] == 0:
+                item[5] = "Sử dụng rồi"
+            if item[6] == 1:
+                item[6] = "Tồn tại"
+            elif item[6] == 0:
+                item[6] = "Không tồn tại"            
 
             self.result.append(item)
 
@@ -69,14 +85,16 @@ class CoupousGUI:
                 self.empty()
 
                 self.window[self.Headings[0]].update(newId)
-                self.window[self.Headings[6]].update(1)
+                self.window[self.Headings[6]].Update(value="Tồn tại")
             elif event == 'ADD':
                 id = self.window[self.Headings[0]].get()
                 code = values[self.Headings[1]]
                 discount = values[self.Headings[2]]
                 date_from = values[self.Headings[3]]
                 date_to = values[self.Headings[4]]
-                status = values[self.Headings[5]]
+                status = 0
+                if values[self.Headings[5]] == "Chưa sử dụng":
+                    status = 1
 
                 data = {"id": id[2:], "coupou_code": code, "discount": discount, "date_from": date_from,
                         "date_to": date_to, "status": status, "is_active": 1}
@@ -97,56 +115,65 @@ class CoupousGUI:
                     for idx in range(len(self.Headings)):
                         self.window[self.Headings[idx]].update(self.result[selected_row[0]][idx])
             elif event == "DELETE":
-                id = self.window[self.Headings[0]].get()
-                if id == "":
-                    self.reset()
-                    sg.popup("Something error with server")
+                selected_row = values["-TABLE-"]
+                if selected_row:
+                    id = self.window[self.Headings[0]].get()
+                    if id == "":
+                        self.reset()
+                        sg.popup("Something error with server")
 
-                while True:
-                    # getPopupComfirm() có thể sài nhiều lần nên t để trong common
-                    event, values = getPopupComfirm().read()
-                    if event in (sg.WIN_CLOSED, 'Cancel'):
-                        break
-                    elif event == "OK":
-                        result = CoupousBiz().delete_coupous(id=id[2:])
-                        if result:
-                            sg.popup("Xóa thành công")
-                            self.empty()
-                            self.reset()
+                    while True:
+                        # getPopupComfirm() có thể sài nhiều lần nên t để trong common
+                        event, values = getPopupComfirm().read()
+                        if event in (sg.WIN_CLOSED, 'Cancel'):
                             break
-                        else:
-                            self.empty()
-                            self.reset()
-                            sg.popup("Something error with db")
+                        elif event == "OK":
+                            result = CoupousBiz().delete_coupous(id=id[2:])
+                            if result:
+                                sg.popup("Xóa thành công")
+                                self.empty()
+                                self.reset()
+                                break
+                            else:
+                                self.empty()
+                                self.reset()
+                                sg.popup("Something error with db")
+                else: 
+                    sg.popup("Chưa chọn coupou")
             elif event == "UPDATE":
-                id = self.window[self.Headings[0]].get()
-                code = values[self.Headings[1]]
-                discount = values[self.Headings[2]]
-                date_from = values[self.Headings[3]]
-                date_to = values[self.Headings[4]]
-                status = values[self.Headings[5]]
+                selected_row = values["-TABLE-"]
+                if selected_row:
+                    id = self.window[self.Headings[0]].get()
+                    code = values[self.Headings[1]]
+                    discount = values[self.Headings[2]]
+                    date_from = values[self.Headings[3]]
+                    date_to = values[self.Headings[4]]
+                    status = 0
+                    if values[self.Headings[5]] == "Chưa sử dụng":
+                        status = 1
 
-                data = {"id": id[2:], "coupou_code": code, "discount": discount, "date_from": date_from,
-                        "date_to": date_to, "status": status, "is_active": 1}
+                    data = {"id": id[2:], "coupou_code": code, "discount": discount, "date_from": date_from,
+                            "date_to": date_to, "status": status, "is_active": 1}
 
-                flag = any(value == '' for value in data.values())
-                flagUpt = False
-                if flag:
-                    self.empty()
-                    sg.popup("Invalid!")
-                    flagUpt = True
-                if not flagUpt:
+                    flag = any(value == '' for value in data.values())
+                    flagUpt = False
+                    if flag:
+                        self.empty()
+                        sg.popup("Invalid!")
+                        flagUpt = True
+                    if not flagUpt:
+                        upd = CoupousBiz().update_coupous(coupous=data, cond={"id": id[2:]})
                     upd = CoupousBiz().update_coupous(coupous=data, cond={"id": id[2:]})
-                upd = CoupousBiz().update_coupous(coupous=data, cond={"id": id[2:]})
-                if upd != -1:
-                    sg.popup('Update Success')
-                    self.empty()
-                    self.reset()
-                else:
-                    self.empty()
-                    self.reset()
-                    sg.popup("Something error with db")
-
+                    if upd != -1:
+                        sg.popup('Update Success')
+                        self.empty()
+                        self.reset()
+                    else:
+                        self.empty()
+                        self.reset()
+                        sg.popup("Something error with db")
+                else: 
+                    sg.popup("Chưa chọn coupou")
                 # sự kiện search onchange
             elif event == "-CONTENT-":
                 value_search = values["-CONTENT-"]

@@ -1,5 +1,5 @@
-class Supplier:
-    def __int__(self,id,name,addr,is_active):
+class Suppliers:
+    def __init__(self, id , name , addr, is_active):
         self.id=id
         self.name=name
         self.addr=addr

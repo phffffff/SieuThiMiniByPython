@@ -14,6 +14,10 @@ class ProductTypeGUI:
         for item in self.lstProductTypes:
             item = list(item)
             item[0] = ProductTypesBiz().to_str_id(id=item[0])# tùy chỉnh ID
+            if item[2] == 1:
+                item[2] = "Hoạt động"
+            elif item[2] == 0:
+                item[2] = "Không hoạt động"
             self.result.append(item)
         
         sg.theme('DarkAmber')#thiết lập theme
@@ -23,7 +27,7 @@ class ProductTypeGUI:
         layout1=  [[sg.Text('Search with:',size=15),sg.Combo(['id','name','is_active'],default_value="id", key='-COMBO_SEARCH-',enable_events=True),sg.Text('Content:'),sg.Input(key='-CONTENT-',size=22,enable_events=True)],  
                       [sg.Text('Id :',size=15), sg.Text(text="", key=self.Headings[0])],
                       [sg.Text('Name:',size=15), sg.Input(key=self.Headings[1])],
-                      [sg.Text('Status:',size=15), sg.Input(key=self.Headings[2],default_text="1")],
+                      [sg.Text('Status:',size=15), sg.Combo(key=self.Headings[2],values=["Hoạt động", "Không hoạt động"],default_value="Hoạt động")],
                       [sg.Button('New ID'), sg.Button('Add'),sg.Button('Update'), sg.Button('Delete'),sg.Button('Reset')]]
 
         layout=[[sg.Col(layou2),sg.Col(layout1)]]
@@ -44,6 +48,10 @@ class ProductTypeGUI:
         for item in self.lstProductTypes:
             item = list(item)
             item[0] = ProductTypesBiz().to_str_id(item[0])
+            if item[2] == 1:
+                item[2] = "Hoạt động"
+            elif item[2] == 0:
+                item[2] = "Không hoạt động"
             self.result.append(item)
             
         self.window["-TABLE-"].update(self.result)
@@ -87,52 +95,56 @@ class ProductTypeGUI:
                         self.window[self.Headings[idx]].update(self.result[selected_row[0]][idx])
 
             elif event == "Delete":
-                if event == "-TABLE-":
                     # lấy row idx
-                    selected_row = values["-TABLE-"][0]
+                selected_row = values["-TABLE-"][0]
 
-                    if selected_row:
-                        # có thể duyệt for nếu thích
-                        for idx in range(len(self.Headings)):
-                            self.window[self.Headings[idx]].update(self.result[selected_row][idx])
+                if selected_row:
+                    # có thể duyệt for nếu thích
+                    for idx in range(len(self.Headings)):
+                        self.window[self.Headings[idx]].update(self.result[selected_row][idx])
 
-                id = self.window[self.Headings[0]].get()
+                    id = self.window[self.Headings[0]].get()
 
-                while True:
-                    
-                    event, values = getPopupComfirm().read()
-                    
-                    if event == sg.WIN_CLOSED or event == "Cancel":
-                        break
-                    elif event == "OK":
-                        result = ProductTypesBiz().delete_product_type(id=id[2:])
-                        if result:
-                            sg.popup("Xóa thành công")
-                            self.reset()
-                        else:
-                            self.reset()
-                            sg.popup("Something error with db")
+                    while True:
+                        
+                        event, values = getPopupComfirm().read()
+                        
+                        if event == sg.WIN_CLOSED or event == "Cancel":
+                            break
+                        elif event == "OK":
+                            result = ProductTypesBiz().delete_product_type(id=id[2:])
+                            if result:
+                                sg.popup("Xóa thành công")
+                                self.reset()
+                            else:
+                                self.reset()
+                                sg.popup("Something error with db")
+                else:
+                    sg.popup("Chưa chọn loại sản phẩm")
 
             elif event == "Update":
-                if event == "-TABLE-":
-                    selected_row = values["-TABLE-"][0]
+                selected_row = values["-TABLE-"][0]
 
-                    if selected_row:
-                        # có thể duyệt for nếu thích
-                        self.window[self.Headings[0]].update(self.result[selected_row][0])
-                        self.window[self.Headings[1]].update(self.result[selected_row][1])
-                        self.window[self.Headings[2]].update(self.result[selected_row][2])
+                if selected_row:
+                    # có thể duyệt for nếu thích
+                    self.window[self.Headings[0]].update(self.result[selected_row][0])
+                    self.window[self.Headings[1]].update(self.result[selected_row][1])
+                    self.window[self.Headings[2]].update(self.result[selected_row][2])
 
-                id = self.window[self.Headings[0]].get()
-                name = values[self.Headings[1]]
-                is_active = values[self.Headings[2]]
+                    id = self.window[self.Headings[0]].get()
+                    name = values[self.Headings[1]]
+                    is_active = 0
+                    if values[self.Headings[2]] == "Hoạt động":
+                        is_active = 1
 
-                data = {"id": id[2:], "name":name, "is_active":is_active}
+                    data = {"id": id[2:], "name":name, "is_active":is_active}
 
-                upd = ProductTypesBiz().update_product_type(data=data, cond={"id":id[2:]})
-                if upd != -1:
-                    sg.popup('Upđate Success')
-                    self.reset()
+                    upd = ProductTypesBiz().update_product_type(data=data, cond={"id":id[2:]})
+                    if upd != -1:
+                        sg.popup('Upđate Success')
+                        self.reset()
+                else:
+                    sg.popup("Chưa chọn loại sản phẩm")
             
             # sự kiện search onchange
             elif event == "-CONTENT-":

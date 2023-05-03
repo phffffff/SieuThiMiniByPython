@@ -7,4 +7,4 @@ class Memberships:
         self.phone=phone
         self.mail=mail
         self.point=point
-        self.isActive=is_active
+        self.status=is_active

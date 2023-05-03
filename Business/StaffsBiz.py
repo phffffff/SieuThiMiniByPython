@@ -7,6 +7,22 @@ class StaffsBiz:
     def __init__(self):
         self.dal = StaffsDal()
 
+    def get_info_staff(self, cond=None, fields="*"):
+        result = self.dal.listDataWithJson(where=cond,fields=fields,order_by="id ASC")
+        if result:
+            count_active = 0
+            count_no_active  = 0
+            for item in result:
+                if item[6] == 1:
+                    count_active += 1
+                if item[6] == 0:
+                    count_no_active += 1
+            return {
+                "hoatdong": count_active,
+                "kohoatdong":count_no_active,
+            }
+        return 0
+
     def get_all_staffs(self, cond=None):
         result = self.dal.listDataWithJson(where=cond, order_by="id ASC")
         if result:
@@ -18,7 +34,7 @@ class StaffsBiz:
         result = self.dal.findDataWithJson(where={"{}".format(key): value})
         if result:
             return result
-        return None
+        return []
 
     def add_staffs(self, staffs):
         result = self.dal.insert(staffs)

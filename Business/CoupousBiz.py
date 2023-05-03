@@ -7,6 +7,30 @@ class CoupousBiz:
     def __init__(self):
         self.dal = CoupouDal()
 
+    def get_info_coupou(self, cond=None, fields="*"):
+        result = self.dal.listDataWithJson(where=cond,fields=fields,order_by="id ASC")
+        if result:
+            count_active = 0
+            count_no_active  = 0
+            count_sudung = 0
+            count_no_sudung  = 0
+            for item in result:
+                if item[6] == 1:
+                    count_active += 1
+                if item[6] == 0:
+                    count_no_active += 1
+                if item[5] == 1:
+                    count_sudung += 1
+                if item[5] == 0:
+                    count_no_sudung += 1
+            return {
+                "hoatdong": count_active,
+                "kohoatdong":count_no_active,
+                "sudung": count_sudung,
+                "chuasudung": count_no_sudung,
+            }
+        return 0
+
     def get_all_coupous(self, cond=None):
         result = self.dal.listDataWithJson(where=cond, order_by="id ASC")
         if result:

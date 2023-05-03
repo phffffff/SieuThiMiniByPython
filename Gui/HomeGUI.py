@@ -1,19 +1,37 @@
 import PySimpleGUI as sg
+
 from Business.ProductBiz import ProductBiz
 from Business.ProductTypesBiz import ProductTypesBiz
 from Business.CoupousBiz import CoupousBiz
+from Business.StaffsBiz import StaffsBiz
 from Business.MembershipsBiz import MembershipsBiz
 from Business.InvoicesBiz import InvoicesBiz
 from Business.InvoicesDetailBiz import InvoiceDetailsBiz
+
+from Gui.RegisterMembershipGUI import MembershipRegisterGui
+from Gui.DetailMembershipGui import MembershipViewGui
+
+from Gui.ProductGui import ProductGUI
+from Gui.ProductTypesGui import ProductTypeGUI
+from Gui.AccountsGui import AccountsGui
+from Gui.StaffsGui import StaffsGui
+from Gui.CoupousGUI import CoupousGUI
+from Gui.MembershipsGui import MembershipsGui
+from Gui.PromotionGui import PromotionsGUI
+from Gui.SupplierGui import SupplierGUI
+from Gui.StatisticalGui import Statistical
+
 from Common.PopupInput import getPopupInput
 import datetime
 
 class HomeGUI:
-    def __init__(self, id):
+    def __init__(self, user):
         sg.theme('DarkBlue2')
         sg.set_options(background_color='#272727', text_color='#ffffff')
 
-        self.staff = id
+        staff = StaffsBiz().find_staffs_with_cond(key="account",value=user["id_account"])
+        self.staff = staff[0]
+        self.role = user["role"]
 
         self.mb = []
         self.mb_id = ''
@@ -76,11 +94,14 @@ class HomeGUI:
 
         table_list_product = sg.Table(values=self.resultPrdctWthTp, headings=self.HeadingsProduct, justification="center", key='-TABLE_LIST_PRODUCT-', enable_events=True)
 
+
+        menu = [['Management', ['Account', 'Staff', 'Supplier', 'Product type', 'Product', 'Membership', 'Coupou', 'Promotion']],['Statiѕtic',['Statiѕtic']] , ['Account',['Change Password','Log out']] ,]
+
         self.spinCount = sg.Spin([i for i in range(10)],initial_value=1, key="-SPIN_COUNT-", enable_events=True, font="blod")
         self.spinSpoint = sg.Spin([0],initial_value=0, key="-SPIN_POINT-", enable_events=True, font="blod")
 
         # định nghĩa layout cho giao diện
-        layout1 = [[sg.Text(text='BILL', font="blod", size=70, justification="center")],
+        layout1 = [sg.Menu(menu),[sg.Text(text='BILL', font="blod", size=70, justification="center")],
                    [table_detail_invoices]]
         
         layout2 = [[sg.Text(text='PRODUCT LIST', font="blod", size=13, justification="center")],
@@ -416,14 +437,16 @@ class HomeGUI:
                             sg.popup("Membership_Id Invalid!")
 
             elif event == "View":
-                print(self.mb)
+                membershipViewGui = MembershipViewGui(id=self.mb_id)
+                membershipViewGui.run()
             
             elif event == "Change":
                 self.discount_pnt = values["-SPIN_POINT-"]
                 self.sum_money()
             
             elif event == "Register":
-                pass
+                registerMembGUI = MembershipRegisterGui()
+                registerMembGUI.run()
             
             elif event == "Payment":
                 id = InvoicesBiz().get_new_id()
@@ -449,7 +472,7 @@ class HomeGUI:
 
                 if add != -1:
                     for product in self.resultDtlInvc:
-                        invoices_detail = {'invoice_id':id[2:],'product_id':product[0][2:],'product_name':product[1],'count': product[2],'price': product[4],'subtotal':product[5],'is_active':1}
+                        invoices_detail = {'invoice_id':id[2:],'product_id':product[0][2:],'product_name':product[1],'count': product[2],'price': product[5],'subtotal':product[6],'is_active':1}
 
                         flagIvd = InvoiceDetailsBiz().add_invoice_details(data=invoices_detail)
                         if flagIvd == -1:
@@ -464,6 +487,34 @@ class HomeGUI:
                         if flagMbs == -1:
                             break
                     self.reset()
+
+            elif event == "Account":
+                accountGui = AccountsGui()
+                accountGui.run()
+            elif event == "Staff":
+                staffGui = StaffsGui()
+                staffGui.run()
+            elif event == "Product type":
+                productTypeGui = ProductTypeGUI()
+                productTypeGui.run()
+            elif event == "Product":
+                productGUI = ProductGUI()
+                productGUI.run()
+            elif event == "Coupou":
+                coupouGui = CoupousGUI()
+                coupouGui.run()
+            elif event == "Membership":
+                membershipGui = MembershipsGui()
+                membershipGui.run()
+            elif event == "Supplier":
+                supplierGui = SupplierGUI()
+                supplierGui.run()
+            elif event == "Promotion":
+                promotionGui = PromotionsGUI()
+                promotionGui.run()
+            elif event == "Statiѕtic":
+                statistical = Statistical()
+                statistical.run()
 
                     
         self.window.close()

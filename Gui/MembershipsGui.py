@@ -19,6 +19,10 @@ class MembershipsGui:
         for item in self.lstMemberships:
             item = list(item)
             item[0] = MembershipsBiz().to_str_id(id=item[0])
+            if item[7] == 1:
+                item[7] = "Hoạt động"
+            elif item[7] == 0:
+                item[7] = "Không hoạt động"
 
             self.result.append(item)
         sg.theme('DarkAmber')  # thiết lập theme
@@ -34,7 +38,7 @@ class MembershipsGui:
                       [sg.Text('Phone:',size=15), sg.Input(key=self.Headings[4])],
                       [sg.Text('Mail:',size=15), sg.Input(key=self.Headings[5])],
                       [sg.Text('Point:',size=15), sg.Input(key=self.Headings[6])],
-                      [sg.Text('Status:',size=15), sg.Input(key=self.Headings[7])],
+                      [sg.Text('Status:',size=15), sg.Combo(values=["Hoạt động", "Không hoạt động"],default_value="Hoạt động",key=self.Headings[7])],
                       [sg.Button('NEW ID'), sg.Button('ADD'),sg.Button('UPDATE'), sg.Button('DELETE'),sg.Button('RESET')]]
 
         layout=[[sg.Col(layou2),sg.Col(layout1)]]
@@ -51,6 +55,10 @@ class MembershipsGui:
         for item in self.lstMemberships:
             item = list(item)
             item[0] = MembershipsBiz().to_str_id(id=item[0])
+            if item[7] == 1:
+                item[7] = "Hoạt động"
+            elif item[7] == 0:
+                item[7] = "Không hoạt động"
 
             self.result.append(item)
 
@@ -69,7 +77,7 @@ class MembershipsGui:
                 self.empty()
 
                 self.window[self.Headings[0]].update(newId)
-                self.window[self.Headings[7]].update(1)
+                self.window[self.Headings[7]].Update(value="Hoạt động")
             elif event == 'ADD':
                 id = self.window[self.Headings[0]].get()
                 verification_code = values[self.Headings[1]]
@@ -97,56 +105,67 @@ class MembershipsGui:
                     for idx in range(len(self.Headings)):
                         self.window[self.Headings[idx]].update(self.result[selected_row[0]][idx])
             elif event == "DELETE":
-                id = self.window[self.Headings[0]].get()
-                if id == "":
-                    self.reset()
-                    sg.popup("Something error with server")
+                selected_row = values["-TABLE-"]
+                if selected_row:
+                        
+                    id = self.window[self.Headings[0]].get()
+                    if id == "":
+                        self.reset()
+                        sg.popup("Something error with server")
 
-                while True:
-                    # getPopupComfirm() có thể sài nhiều lần nên t để trong common
-                    event, values = getPopupComfirm().read()
-                    if event in (sg.WIN_CLOSED, 'Cancel'):
-                        break
-                    elif event == "OK":
-                        result = MembershipsBiz().delete_memberships(id=id[2:])
-                        if result:
-                            sg.popup("Xóa thành công")
-                            self.empty()
-                            self.reset()
+                    while True:
+                        # getPopupComfirm() có thể sài nhiều lần nên t để trong common
+                        event, values = getPopupComfirm().read()
+                        if event in (sg.WIN_CLOSED, 'Cancel'):
                             break
-                        else:
+                        elif event == "OK":
+                            result = MembershipsBiz().delete_memberships(id=id[2:])
+                            if result:
+                                sg.popup("Xóa thành công")
+                                self.empty()
+                                self.reset()
+                                break
+                            else:
+                                self.empty()
+                                self.reset()
+                                sg.popup("Something error with db")
+                else: 
+                    sg.popup("Chưa chọn thành viên")
+            elif event == "UPDATE":
+                selected_row = values["-TABLE-"]
+                if selected_row:
+                    id = self.window[self.Headings[0]].get()
+                    verification_code = values[self.Headings[1]]
+                    name = values[self.Headings[2]]
+                    birthday = values[self.Headings[3]]
+                    phone = values[self.Headings[4]]
+                    mail = values[self.Headings[5]]
+                    point = values[self.Headings[6]]
+                    is_active = 0
+                    if values[self.Headings[7]] == "Hoạt động":
+                        is_active = 1
+
+                    data = {"id":id[2:],"verification_code": verification_code, "name": name, "birthday": birthday, "phone": phone, "mail": mail, "point": point,"is_active": is_active}
+
+                    flag = any(value == '' for value in data.values())
+                    flagUpt = False
+                    if flag:
+                        sg.popup("Invalid!")
+                        flagUpt = True
+                    if not flagUpt:
+                        upd = MembershipsBiz().update_memberships(memberships=data, cond={"id": id[2:]})
+                    
+                        if upd != -1:
+                            sg.popup('Update Success')
                             self.empty()
                             self.reset()
+                        else:
+                            self.reset()
+                            self.empty()
                             sg.popup("Something error with db")
-            elif event == "UPDATE":
-                id = self.window[self.Headings[0]].get()
-                verification_code = values[self.Headings[1]]
-                name = values[self.Headings[2]]
-                birthday = values[self.Headings[3]]
-                phone = values[self.Headings[4]]
-                mail = values[self.Headings[5]]
-                point = values[self.Headings[6]]
-                is_active = values[self.Headings[7]]
 
-                data = {"id":id[2:],"verification_code": verification_code, "name": name, "birthday": birthday, "phone": phone, "mail": mail, "point": point,"is_active": is_active}
-
-                flag = any(value == '' for value in data.values())
-                flagUpt = False
-                if flag:
-                    sg.popup("Invalid!")
-                    flagUpt = True
-                if not flagUpt:
-                    upd = MembershipsBiz().update_memberships(memberships=data, cond={"id": id[2:]})
-                
-                    if upd != -1:
-                        sg.popup('Update Success')
-                        self.empty()
-                        self.reset()
-                    else:
-                        self.reset()
-                        self.empty()
-                        sg.popup("Something error with db")
-
+                else: 
+                    sg.popup("Chưa chọn thành viên")
                 # sự kiện search onchange
             elif event == "-CONTENT-":
                 value_search = values["-CONTENT-"]

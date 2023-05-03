@@ -1,19 +1,19 @@
 import PySimpleGUI as sg
-from SieuThiMiniByPython.Business.MembershipsBiz import MembershipsBiz
-from SieuThiMiniByPython.Common.PopupComfirm import getPopupComfirm
-from DataAccess.MembershipsDal import MembershipsDal
+from Business.MembershipsBiz import MembershipsBiz
+from Common.PopupComfirm import getPopupComfirm
 from Entity.MembershipsEntity import Memberships
 
-class Memberships:
+class MembershipRegisterGui:
     def __init__(self):
 
 
         sg.theme('DarkAmber')  # thiết lập theme
 
         # định nghĩa layout cho giao diện
+        self.newId = MembershipsBiz().get_new_id()
 
-        layout1=  [[sg.Text('TẠO THÀNH VIÊN',font="blod",size=50,justification="center")],
-                      [sg.Text('ID:',size=15), sg.Input(key='id')],
+        layout1=  [[sg.Text('Register',font="blod",size=50,justification="center")],
+                      [sg.Text('ID:',size=15), sg.Input(key='id',default_text=self.newId)],
                       [sg.Text('Verfication code:', size=15), sg.Input(key='code')],
                       [sg.Text('Name:',size=15), sg.Input(key='name')],
                       [sg.Text('Birthday:', size=15), sg.Input(key='day'), sg.CalendarButton('', image_filename='Picture/calendar-24.png',target='day', format='%Y-%m-%d', size=22)],
@@ -44,7 +44,6 @@ class Memberships:
                 if event == "Exit" or event == sg.WINDOW_CLOSED:
                     break
                 elif event == 'TẠO':
-                    id = values['id']
                     verification_code = values['code']
                     name = values['name']
                     birthday = values['day']
@@ -52,7 +51,7 @@ class Memberships:
                     mail = values['mail']
 
 
-                    membership = {"id": id[2:], "verification_code": verification_code, "name": name,
+                    membership = {"id": self.newId[2:], "verification_code": verification_code, "name": name,
                                   "birthday": birthday, "phone": phone, "mail": mail, "point": 0, "is_active": 1}
                     add = MembershipsBiz().add_memberships(memberships=membership)
                     if add != -1:

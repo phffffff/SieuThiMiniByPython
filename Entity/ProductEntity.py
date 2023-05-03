@@ -6,5 +6,5 @@ class ProductEntity:
         self.price=price
         self.discount=discount
         self.remain=remain
-        self.product_type_id=product_type_id
+        self.type=product_type_id
         self.status=is_active    

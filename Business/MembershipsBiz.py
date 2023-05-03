@@ -6,6 +6,22 @@ class MembershipsBiz:
     def __init__(self):
         self.dal = MembershipsDal()
 
+    def get_info_mem(self, cond=None, fields="*"):
+        result = self.dal.listDataWithJson(where=cond,fields=fields,order_by="id ASC")
+        if result:
+            count_active = 0
+            count_no_active  = 0
+            for item in result:
+                if item[7] == 1:
+                    count_active += 1
+                if item[7] == 0:
+                    count_no_active += 1
+            return {
+                "hoatdong": count_active,
+                "kohoatdong":count_no_active,
+            }
+        return 0
+
     def get_all_memberships(self, cond=None):
         result = self.dal.listDataWithJson(where=cond, order_by="id ASC")
         if result:

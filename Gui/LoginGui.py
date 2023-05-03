@@ -4,6 +4,8 @@ import PySimpleGUI as sg
 
 from Business.AccountsBiz import AccountsBiz
 
+from Gui.HomeGUI import HomeGUI
+
 class LoginGUI:
     def __init__(self):
         sg.theme('DarkAmber')  # thiết lập theme
@@ -27,13 +29,14 @@ class LoginGUI:
                 # kiểm tra thông tin đăng nhập
                 username = values['username']
                 password = values['password']
-                biz = AccountsBiz()
-                result = biz.login(username=username, password=password)
-                print(result)
-                if result == None:
-                    sg.popup('Đăng nhập thất baị')
-                    return
-                sg.popup('Đăng nhập thành công!', result)
+                result = AccountsBiz().login(username=username, password=password)
+                if result["flag"]:
+                    user = {"id_account":result["data"][0],"role":result["data"][3],"status":result["data"][4]}
+                    homeGUI = HomeGUI(user=user)
+                    homeGUI.run()
+                else:
+                    sg.popup(result["data"])
+
 
         # đóng cửa sổ giao diện khi kết thúc
         self.window.close()
