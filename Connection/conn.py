@@ -12,10 +12,10 @@ class Conn:
             # database=os.environ.get("DATABASE"),
             # port=os.environ.get("PORT")
         host = "localhost",
-        user = "sieu_thi_mini",
-        password = "@Klov3x124n",
+        user = "root",
+        password = "",
         database = "sieu_thi_mini",
-        port = 3308
+        port = 3306
 
         )
         self.cursor = self.conn.cursor()

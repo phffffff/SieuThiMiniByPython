@@ -1,63 +1,53 @@
-from  DataAccess.PromotionsDal import Promotion_Dal
+from  DataAccess.PromotionsDal import PromotionDal
 class PromotionsBiz:
     def __init__(self):
-        self.dal = Promotion_Dal()
+        self.dal = PromotionDal()
 
-    def get_all(self):
-        cond = 'is_active=1'
-        result = self.dal.listDataWithCond(cond=cond)
+    def get_all_promotion(self, cond=None, fields="*"):
+        result = self.dal.listDataWithJson(where=cond, fields=fields, order_by="id DESC")
+        if result:
+            return result
+        return []
+
+
+    def find_promotion_with_cond(self, key, value):
+        # mặc định nó sẽ tìm 1 row vì t để fetch_one, còn key
+        result = self.dal.findDataWithJson(where={"{}".format(key): value})
         if result:
             return result
         return None
 
-    def get_id(self, id):
-        cond = 'id = {}'.format(id)
-        result = self.dal.listDataWithCond(cond=cond)
-        if result:
-            return result
-        return None
 
-    def get_promotion_name(self, name):
-        cond = 'promotion_name '
-        like = '{}'.format(name)
-        result = self.dal.listDataWithCond1(cond=cond ,like = like)
-        if result:
-            return result
-        return None
-
-    def get_date_from(self, date):
-        cond = 'date_from'
-        like = '{}'.format(date)
-        result = self.dal.listDataWithCond1(cond=cond, like=like)
-        if result:
-            return result
-        return None
-
-    def get_date_to(self, date):
-        cond = 'date_to'
-        like = '{}'.format(date)
-        result = self.dal.listDataWithCond1(cond=cond, like=like)
-        if result:
-            return result
-        return None
-
-    def get_status(self, status):
-        cond = 'status'
-        like = '{}'.format(status)
-        result = self.dal.listDataWithCond1(cond=cond, like=like)
-        if result:
-            return result
-        return None
-
-    def add(self, coupous):
-        result = self.dal.create(coupous)
+    def add_promotion(self, promotions):
+        result = self.dal.insert(promotions)
         if result == -1:
             return -1
         return result
 
-    def update(self, coupous, cond):
-        result = self.dal.update(coupous, cond)
+
+    def update_promotion(self, promotion, cond):
+        result = self.dal.update(update_data=promotion, where_data=cond)
         if result == -1:
             return -1
         return result
 
+
+    def delete_promotion(self, id):
+        result = self.dal.update(update_data={"is_active": 0}, where_data={"id": id})
+        if result == -1:
+            return -1
+        return result
+
+
+    def get_new_id(seft):
+        result = seft.dal.findDataWithJson(fields=['id'], order_by="id DESC", limit=1)
+
+        if result:
+            currentId = result[0]
+            temp = int(currentId + 1)
+            return seft.to_str_id(temp)
+        return "KM01"
+
+
+    def to_str_id(seft, id):
+        return "KM0{}".format(id) if id < 10 else "KM{}".format(id)
