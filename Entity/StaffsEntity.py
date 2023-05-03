@@ -6,4 +6,4 @@ class Staffs:
         self.phone=phone
         self.mail=mail
         self.account=account
-        self.isActive=is_active
+        self.status=is_active

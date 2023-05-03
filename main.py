@@ -7,14 +7,16 @@ from Gui.ProductTypesGui import ProductTypeGUI
 from Gui.SupplierGui import SupplierGUI
 from Gui.HomeGUI import HomeGUI
 from Gui.ImportGUI import ImportGUI
+from Gui.AccountsGui import AccountsGui
+
 # Memberships = MembershipsGui()
 # Memberships.run()
 
 # coupousGUI = CoupousGUI()
 # coupousGUI.run()
 
-# Staff = StaffsGui()
-# Staff.run()
+Staff = StaffsGui()
+Staff.run()
 
 # ProductTest = ProductGUI()
 # ProductTest.run()
@@ -27,8 +29,11 @@ from Gui.ImportGUI import ImportGUI
 # supplierGUI = SupplierGUI()
 # supplierGUI.run()
 
-importGUI = ImportGUI()
-importGUI.run()
+# importGUI = ImportGUI()
+# importGUI.run()
+
+# accountGui = AccountsGui()
+# accountGui.run()
 
 
 

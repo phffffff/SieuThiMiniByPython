@@ -2,7 +2,7 @@ import logging
 
 import PySimpleGUI as sg
 
-from Business.AccountsBiz import AccountBiz
+from Business.AccountsBiz import AccountsBiz
 
 class LoginGUI:
     def __init__(self):
@@ -27,7 +27,7 @@ class LoginGUI:
                 # kiểm tra thông tin đăng nhập
                 username = values['username']
                 password = values['password']
-                biz = AccountBiz()
+                biz = AccountsBiz()
                 result = biz.login(username=username, password=password)
                 print(result)
                 if result == None:

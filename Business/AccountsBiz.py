@@ -7,8 +7,8 @@ class AccountsBiz:
     def __init__(self):
         self.dal = AccountsDal()
 
-    def get_all_accounts(self, cond=None):
-        result = self.dal.listDataWithJson(where=cond, order_by="id ASC")
+    def get_all_accounts(self, cond=None,fields="*"):
+        result = self.dal.listDataWithJson(where=cond,fields=fields, order_by="id ASC")
         if result:
             return result
         return []
@@ -45,7 +45,7 @@ class AccountsBiz:
             currentId = result[0]
             temp = int(currentId + 1)
             return seft.to_str_id(temp)
-        return "MB01"
+        return "AC01"
 
     def to_str_id(seft, id):
-        return "MB0{}".format(id) if id < 10 else "SP{}".format(id)
+        return "AC0{}".format(id) if id < 10 else "AC{}".format(id)

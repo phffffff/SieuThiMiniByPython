@@ -151,16 +151,14 @@ class ProductGUI:
 
                 while True:
                     # getPopupComfirm() có thể sài nhiều lần nên t để trong common
-                    wd = getPopupComfirm()
-                    event, values = wd.read()
+                    event, values = getPopupComfirm().read()
                     if event in (sg.WIN_CLOSED, 'Cancel'):
-                        wd.close()
+                        break
                     elif event == "OK":
                         result = ProductBiz().delete_product(id=id[2:])
                         if result:
                             sg.popup("Xóa thành công")
                             self.reset()
-                            break
                         else:
                             self.reset()
                             sg.popup("Something error with db")
