@@ -3,6 +3,8 @@ from Business.SuppliersBiz import SuppliersBiz
 from Entity.SupplierEntity import Suppliers
 from Common.PopupComfirm import getPopupComfirm
 
+from Gui.Spplr_PrdctTp import SpplrPrdctTpGui
+
 class SupplierGUI:
     def __init__(self):
         
@@ -30,7 +32,7 @@ class SupplierGUI:
                       [sg.Text('Name:',size=15), sg.Input(key=self.Headings[1])],
                       [sg.Text('Address:',size=15), sg.Input(key=self.Headings[2])],
                       [sg.Text('Status:',size=15), sg.Combo(values=["Hoạt động", "Không hoạt động"],default_value="Hoạt động",key=self.Headings[3])],
-                      [sg.Button('New ID'), sg.Button('Add'),sg.Button('Update'), sg.Button('Delete'),sg.Button('Reset')]]
+                      [sg.Button('New ID'), sg.Button('Add'),sg.Button('Update'), sg.Button('Delete'),sg.Button('Reset'),sg.Button('Detail')]]
 
         layout=[[sg.Col(layou2),sg.Col(layout1)]]
 
@@ -173,6 +175,18 @@ class SupplierGUI:
                         result.append(self.result[idx])
 
                 self.window["-TABLE-"].update(result)
+
+            elif event == "Detail":
+                selected_row = values["-TABLE-"]
+
+                if selected_row:
+                    # có thể duyệt for nếu thích                      
+                    id = self.window[self.Headings[0]].get()
+
+                    spplrPrdctTpGui = SpplrPrdctTpGui(supplier_id=id)
+                    spplrPrdctTpGui.run()
+
+                    
 
         self.window.close()
 

@@ -20,6 +20,9 @@ from Gui.MembershipsGui import MembershipsGui
 from Gui.PromotionGui import PromotionsGUI
 from Gui.SupplierGui import SupplierGUI
 from Gui.StatisticalGui import Statistical
+from Gui.ImportGUI import ImportGUI
+
+from Gui.ChangePassword import ChangePasswordGui
 
 from Common.PopupInput import getPopupInput
 import datetime
@@ -32,6 +35,7 @@ class HomeGUI:
         staff = StaffsBiz().find_staffs_with_cond(key="account",value=user["id_account"])
         self.staff = staff[0]
         self.role = user["role"]
+        self.account_id = user["id_account"]
 
         self.mb = []
         self.mb_id = ''
@@ -95,7 +99,7 @@ class HomeGUI:
         table_list_product = sg.Table(values=self.resultPrdctWthTp, headings=self.HeadingsProduct, justification="center", key='-TABLE_LIST_PRODUCT-', enable_events=True)
 
 
-        menu = [['Management', ['Account', 'Staff', 'Supplier', 'Product type', 'Product', 'Membership', 'Coupou', 'Promotion']],['Statiѕtic',['Statiѕtic']] , ['Account',['Change Password','Log out']] ,]
+        menu = [['Management', ['Account', 'Staff', 'Supplier', 'Product type', 'Product', 'Membership', 'Coupou', 'Promotion', 'Import',]],['Statiѕtic',['Statiѕtic']] , ['Account',['Change Password','Log out']] ,]
 
         self.spinCount = sg.Spin([i for i in range(10)],initial_value=1, key="-SPIN_COUNT-", enable_events=True, font="blod")
         self.spinSpoint = sg.Spin([0],initial_value=0, key="-SPIN_POINT-", enable_events=True, font="blod")
@@ -489,32 +493,72 @@ class HomeGUI:
                     self.reset()
 
             elif event == "Account":
-                accountGui = AccountsGui()
-                accountGui.run()
+                if self.role == 1:
+                    accountGui = AccountsGui()
+                    accountGui.run()
+                else:
+                    sg.popup("Không đủ quyền")
             elif event == "Staff":
-                staffGui = StaffsGui()
-                staffGui.run()
+                if self.role == 1:    
+                    staffGui = StaffsGui()
+                    staffGui.run()
+                else:
+                    sg.popup("Không đủ quyền")
             elif event == "Product type":
-                productTypeGui = ProductTypeGUI()
-                productTypeGui.run()
+                if self.role == 1:  
+                    productTypeGui = ProductTypeGUI()
+                    productTypeGui.run()
+                else:
+                    sg.popup("Không đủ quyền")
             elif event == "Product":
-                productGUI = ProductGUI()
-                productGUI.run()
+                if self.role == 1:  
+                    productGUI = ProductGUI()
+                    productGUI.run()
+                else:
+                    sg.popup("Không đủ quyền") 
             elif event == "Coupou":
-                coupouGui = CoupousGUI()
-                coupouGui.run()
+                if self.role == 1:                  
+                    coupouGui = CoupousGUI()
+                    coupouGui.run()
+                else:
+                    sg.popup("Không đủ quyền") 
             elif event == "Membership":
-                membershipGui = MembershipsGui()
-                membershipGui.run()
+                if self.role == 1:   
+                    membershipGui = MembershipsGui()
+                    membershipGui.run()
+                else:   
+                    sg.popup("Không đủ quyền")                     
             elif event == "Supplier":
-                supplierGui = SupplierGUI()
-                supplierGui.run()
+                if self.role == 1:  
+                    supplierGui = SupplierGUI()
+                    supplierGui.run()
+                else:   
+                    sg.popup("Không đủ quyền")   
             elif event == "Promotion":
-                promotionGui = PromotionsGUI()
-                promotionGui.run()
+                if self.role == 1:  
+                    promotionGui = PromotionsGUI()
+                    promotionGui.run()
+                else:   
+                    sg.popup("Không đủ quyền")  
             elif event == "Statiѕtic":
-                statistical = Statistical()
-                statistical.run()
+                if self.role == 1:  
+                    statistical = Statistical()
+                    statistical.run()
+                else:   
+                    sg.popup("Không đủ quyền")  
+            elif event == "Import":
+                if self.role == 1:  
+                    importGui = ImportGUI()
+                    importGui.run()
+                else:   
+                    sg.popup("Không đủ quyền")  
+
+            elif event == "Change Password":  
+                changePassword = ChangePasswordGui(id=self.account_id)
+                changePassword.run()
+
+            elif event == "Log out":  
+                break
 
                     
         self.window.close()

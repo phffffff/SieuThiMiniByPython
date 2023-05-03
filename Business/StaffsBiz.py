@@ -65,3 +65,8 @@ class StaffsBiz:
 
     def to_str_id(seft, id):
         return "MB0{}".format(id) if id < 10 else "SP{}".format(id)
+    
+    def get_A_from_B(self, A, nameB, valueB):
+        result = self.dal.findDataWithJson(fields=A, where={"{}".format(nameB):valueB}, limit=1)
+        
+        return result[0]

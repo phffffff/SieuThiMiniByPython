@@ -1,5 +1,5 @@
 from DataAccess.PurchaseOrdersDal  import PurchaseOrdersDal
-
+import datetime
 
 class PurchaseOrdersBiz:
     def __init__(self):
@@ -51,5 +51,48 @@ class PurchaseOrdersBiz:
         result = self.dal.findDataWithJson(fields=A, where={"{}".format(nameB):valueB}, limit=1)
         
         return result[0]
+
+    def get_purchase_max_price(self):
+        result = self.dal.findDataWithJson(fields=["total_price"],order_by= "total_price DESC",limit=1)
+        if result:
+            return result[0]
+        return 0
+    def get_purchase_min_price(self):
+        result = self.dal.findDataWithJson(fields=["total_price"],order_by= "total_price ASC",limit=1)
+        if result:
+            return result[0]
+        return 0
+    def get_purchase_by_day(self):
+        result = self.dal.listDataWithJson(fields=["date","total_price"],where={"is_active":1})
+        today = datetime.date.today()
+        sum = 0
+        if result:
+            for item in result:
+                if item[0] == today:
+                    sum += item[1]
+            return sum
+        return 0
+    def get_purchase_by_month(self):
+        result = self.dal.listDataWithJson(fields=["date","total_price"],where={"is_active":1})
+        month_current = datetime.date.today().month
+        year_current = datetime.date.today().year
+        sum = 0
+        if result:
+            for item in result:
+                if item[0].month == month_current and item[0].year == year_current:
+                    sum += item[1]
+            return sum
+        return 0
+    def get_purchase_by_year(self):
+        result = self.dal.listDataWithJson(fields=["date","total_price"],where={"is_active":1})
+        year_current = datetime.date.today().year
+        sum = 0
+        if result:
+            for item in result:
+                if item[0].year == year_current:
+                    sum += item[1]
+            return sum
+        return 0
+        
             
 

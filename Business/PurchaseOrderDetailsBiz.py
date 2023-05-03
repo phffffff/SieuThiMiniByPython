@@ -6,7 +6,7 @@ class PurchaseOrderDetailsBiz:
         self.dal = PurchaseOrderDetailsDal()
 
     def get_all_purchase_order_details(self, cond=None, fields="*"):
-        result = self.dal.listDataWithJson(where=cond, fields=fields, order_by="id DESC")
+        result = self.dal.listDataWithJson(where=cond, fields=fields, order_by="purchase_order_id DESC")
         if result:
             return result
         return []

@@ -1,5 +1,6 @@
 from DataAccess.InvoicesDal  import InvoicessDal
 
+import datetime
 
 class InvoicesBiz:
     def __init__(self):
@@ -51,5 +52,48 @@ class InvoicesBiz:
         result = self.dal.findDataWithJson(fields=A, where={"{}".format(nameB):valueB}, limit=1)
         
         return result[0]
+    
+    def get_invoice_max_price(self):
+        result = self.dal.findDataWithJson(fields=["remaining_price"],order_by= "remaining_price DESC",limit=1)
+        if result:
+            return result[0]
+        return 0
+    def get_invoice_min_price(self):
+        result = self.dal.findDataWithJson(fields=["remaining_price"],order_by= "remaining_price ASC",limit=1)
+        if result:
+            return result[0]
+        return 0
+    def get_invoice_by_day(self):
+        result = self.dal.listDataWithJson(fields=["date","remaining_price"],where={"is_active":1})
+        today = datetime.date.today()
+        sum = 0
+        if result:
+            for item in result:
+                if item[0] == today:
+                    sum += item[1]
+            return sum
+        return 0
+    def get_invoice_by_month(self):
+        result = self.dal.listDataWithJson(fields=["date","remaining_price"],where={"is_active":1})
+        month_current = datetime.date.today().month
+        year_current = datetime.date.today().year
+        sum = 0
+        if result:
+            for item in result:
+                if item[0].month == month_current and item[0].year == year_current:
+                    sum += item[1]
+            return sum
+        return 0
+    def get_invoice_by_year(self):
+        result = self.dal.listDataWithJson(fields=["date","remaining_price"],where={"is_active":1})
+        year_current = datetime.date.today().year
+        sum = 0
+        if result:
+            for item in result:
+                if item[0].year == year_current:
+                    sum += item[1]
+            return sum
+        return 0
+        
             
 

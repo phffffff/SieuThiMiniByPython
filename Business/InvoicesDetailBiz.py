@@ -6,7 +6,7 @@ class InvoiceDetailsBiz:
         self.dal = InvoiceDetailsDal()
 
     def get_all_invoice_details(self, cond=None, fields="*"):
-        result = self.dal.listDataWithJson(where=cond, fields=fields, order_by="id DESC")
+        result = self.dal.listDataWithJson(where=cond, fields=fields, order_by="invoice_id DESC")
         if result:
             return result
         return []

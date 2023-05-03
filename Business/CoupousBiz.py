@@ -80,4 +80,9 @@ class CoupousBiz:
         if result:
             return result
         return []
+    def get_A_from_B(self, A, nameB, valueB):
+        result = self.dal.findDataWithJson(fields=A, where={"{}".format(nameB):valueB}, limit=1)
+        if result:
+            return result[0]
+        return "null"
 
