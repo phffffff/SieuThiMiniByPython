@@ -46,7 +46,7 @@ class PromotionsBiz:
             currentId = result[0]
             temp = int(currentId + 1)
             return seft.to_str_id(temp)
-        return "SP01"
+        return "KM01"
 
 
     def to_str_id(seft, id):

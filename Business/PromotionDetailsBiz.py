@@ -33,22 +33,15 @@ class PromotionDetailsBiz:
         return result
 
 
-    def delete_promotion(self, id , product_id):
-        result = self.dal.update(update_data={"is_active": 0}, where_data={"promotion_id": id , "product_id": product_id})
+    def delete_promotion(self, promotion_id , product_id):
+        result = self.dal.update(update_data={"is_active": 0}, where_data={"promotion_id": promotion_id , "product_id": product_id})
         if result == -1:
             return -1
         return result
 
 
-    def get_new_id(seft):
-        result = seft.dal.findDataWithJson(fields=['id'], order_by="id DESC", limit=1)
-
-        if result:
-            currentId = result[0]
-            temp = int(currentId + 1)
-            return seft.to_str_id(temp)
-        return "SP01"
-
-
     def to_str_id(seft, id):
         return "KM0{}".format(id) if id < 10 else "KM{}".format(id)
+
+    def to_str_id_product(seft, id):
+        return "SP0{}".format(id) if id < 10 else "SP{}".format(id)

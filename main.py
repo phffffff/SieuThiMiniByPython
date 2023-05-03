@@ -6,6 +6,7 @@ from Gui.ProductGui import ProductGUI
 from Gui.ProductTypesGui import ProductTypeGUI
 from Gui.HomeGUI import HomeGUI
 from  Gui.PromotionGui import PromotionsGUI
+from Gui.StatisticalGui import Statistical
 # Memberships = LoginGUI()
 # Memberships.run()
 
@@ -19,6 +20,7 @@ from  Gui.PromotionGui import PromotionsGUI
 #
 # home = HomeGUI()
 # home.run()
-pro = PromotionsGUI()
-pro.run()
-
+# pro = PromotionsGUI()
+# pro.run()
+statistical = Statistical()
+statistical.run()
