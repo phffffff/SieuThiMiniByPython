@@ -422,6 +422,9 @@ class HomeGUI:
                 self.discount_pnt = values["-SPIN_POINT-"]
                 self.sum_money()
             
+            elif event == "Register":
+                pass
+            
             elif event == "Payment":
                 id = InvoicesBiz().get_new_id()
                 date = datetime.datetime.now().strftime("%Y-%m-%d")

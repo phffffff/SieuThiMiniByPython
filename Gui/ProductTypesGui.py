@@ -82,11 +82,9 @@ class ProductTypeGUI:
                 selected_row = values["-TABLE-"]
                 # binding dữ liệu đến input field
                 if selected_row:
-                    print(selected_row)
                     # có thể duyệt for nếu thích
-                    self.window[self.Headings[0]].update(self.result[selected_row[0]][0])
-                    self.window[self.Headings[1]].update(self.result[selected_row[0]][1])
-                    self.window[self.Headings[2]].update(self.result[selected_row[0]][2])
+                    for idx in range(len(self.Headings)):
+                        self.window[self.Headings[idx]].update(self.result[selected_row[0]][idx])
 
             elif event == "Delete":
                 if event == "-TABLE-":
@@ -95,19 +93,17 @@ class ProductTypeGUI:
 
                     if selected_row:
                         # có thể duyệt for nếu thích
-                        self.window[self.Headings[0]].update(self.result[selected_row][0])
-                        self.window[self.Headings[1]].update(self.result[selected_row][1])
-                        self.window[self.Headings[2]].update(self.result[selected_row][2])
+                        for idx in range(len(self.Headings)):
+                            self.window[self.Headings[idx]].update(self.result[selected_row][idx])
 
                 id = self.window[self.Headings[0]].get()
 
                 while True:
-                    # getPopupComfirm() có thể sài nhieuf lần nên t để trong common
-                    wd = getPopupComfirm()
-                    event, values = wd.read()
+                    
+                    event, values = getPopupComfirm().read()
                     
                     if event == sg.WIN_CLOSED or event == "Cancel":
-                        wd.close()
+                        break
                     elif event == "OK":
                         result = ProductTypesBiz().delete_product_type(id=id[2:])
                         if result:

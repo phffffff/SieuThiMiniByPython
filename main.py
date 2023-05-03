@@ -17,17 +17,20 @@ from Gui.AccountsGui import AccountsGui
 # coupousGUI = CoupousGUI()
 # coupousGUI.run()
 
-Staff = StaffsGui()
-Staff.run()
+# Staff = StaffsGui()
+# Staff.run()
 
 # ProductTest = ProductGUI()
 # ProductTest.run()
 # ProductTest = ProductTypeGUI()
 # ProductTest.run()
 
-home = HomeGUI()
+home = HomeGUI(2)
 home.run()
 
-statistical = Statistical()
-statistical.run()
+# statistical = Statistical()
+# statistical.run()
+
+# promotionsGUI = PromotionsGUI()
+# promotionsGUI.run()
 
